@@ -1,0 +1,36 @@
+[system]
+    #api访问密钥，为空不启用密钥检查功能
+    SecretKey = ""
+    #可访问IP白名单，如果为空就是允许全部，空：[] ，赋值例值["xxx.xxx.xxx.xxx","xxx.xxx.xxx.xxx"]
+    whitelist = []
+
+# HTTP Server
+[server]
+	Address     = ":8199"
+	ServerRoot  = "public"
+	ServerAgent = "gf-app"
+	LogPath     = "/tmp/log/gf-app/server"
+
+# Logger.
+[logger]
+    Path   = "./log"
+    Level  = "ALL"
+    Stdout = false
+    RotateExpire         = "1d"
+    RotateBackupLimit    = 1
+    RotateBackupExpire   = "7d"
+
+# Template.
+[viewer]
+    Path        = "template"
+    DefaultFile = "index.html"
+    Delimiters  =  ["${", "}"]
+
+
+# 数据库配置
+[database]
+    [database.default]
+        link = "./db/notice.db"
+        type = "sqlite"
+        Level  = "all"
+        Debug = true #是否输出SQL信息
