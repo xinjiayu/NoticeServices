@@ -1,10 +1,10 @@
 package tools
 
 import (
-	"github.com/gogf/gf/crypto/gmd5"
+	"bytes"
 	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/util/gconv"
 	"reflect"
+	"text/template"
 )
 
 // IsContains 查找值val是否在数组array中存在
@@ -24,15 +24,17 @@ func IsContains(val interface{}, array interface{}) bool {
 	return false
 }
 
-//communicateId
-
-func CreateCommunicateId(fromUser, toUser int) string {
-
-	var commId string = gconv.String(fromUser) + "_" + gconv.String(toUser)
-	if fromUser > toUser {
-		commId = gconv.String(toUser) + "_" + gconv.String(fromUser)
+//通过文本模板进行变量替换
+func StringLiteralTemplate(str string, param interface{}) string {
+	t, err := template.New("test").Parse(str)
+	if err != nil {
+		glog.Fatal("Parse string literal template error:", err)
 	}
-	glog.Info(commId)
-	commId, _ = gmd5.Encrypt(commId)
-	return commId
+	buf := new(bytes.Buffer) //读写方法的可变大小的字节缓冲
+	err = t.Execute(buf, param)
+	if err != nil {
+		glog.Fatal("Execute string literal template error:", err)
+		return ""
+	}
+	return buf.String()
 }

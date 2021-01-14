@@ -8,8 +8,7 @@
 [server]
 	Address     = ":8199"
 	ServerRoot  = "public"
-	ServerAgent = "gf-app"
-	LogPath     = "/tmp/log/gf-app/server"
+	ServerAgent = "NoticeServices"
 
 # Logger.
 [logger]

@@ -1,7 +1,7 @@
 #!/bin/bash
  
-WORKSPACE=$(cd $(dirname $0)/; pwd)
-cd $WORKSPACE
+WORKSPACE=$(cd $(dirname $0)/ || exit; pwd)
+cd $WORKSPACE || exit
 
 mkdir -p var
 
@@ -11,10 +11,11 @@ logfile=var/$app.log
 
 function check_pid() {
     if [ -f $pidfile ];then
-        pid=`cat $pidfile`
+        pid=$(cat $pidfile)
+        # shellcheck disable=SC2070
         if [ -n $pid ]; then
-            running=`ps -p $pid|grep -v "PID TTY" |wc -l`
-            return $running
+            running=$(ps -p $pid|grep -v "PID TTY" |wc -l)
+            return "$running"
         fi
     fi
     return 0
@@ -32,8 +33,8 @@ function check_pid() {
 
     nohup ./$app {option} &> $logfile &
     sleep 1
-    running=`ps -p $! | grep -v "PID TTY" | wc -l`
-    if [ $running -gt 0 ];then
+    running=$(ps -p $! | grep -v "PID TTY" | wc -l)
+    if [ "$running" -gt 0 ];then
         echo $! > $pidfile
         echo "$app started..., pid=$!"
     else
@@ -47,8 +48,8 @@ function stop() {
     check_pid
     running=$?
     if [ $running -gt 0 ];then
-        pid=`cat $pidfile`
-        kill $pid
+        pid=$(cat $pidfile)
+        kill "$pid"
         rm -f $pidfile
         echo "$app stoped"
     else

@@ -17,3 +17,5 @@ cbuild
 main
 .vscode
 go.sum
+plugins/mail.so
+plugins/webhook.so
