@@ -102,7 +102,8 @@ func (m *msgService) gateWaySend(message *model.InfoData) {
 		filename := "plugins/" + gatewayName + ".so"
 		p, err := plugin.Open(filename)
 		if err != nil {
-			panic(err)
+			glog.Error(err)
+			return
 		}
 
 		// 查找插件里的指定函数

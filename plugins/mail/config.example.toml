@@ -1,0 +1,4 @@
+MailHost = "smtp.qq.com"
+MailPort = "465"
+MailUser = "aaaa@qq.com"
+MailPass = "aaaaa"

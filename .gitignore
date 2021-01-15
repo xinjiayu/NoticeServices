@@ -19,3 +19,4 @@ main
 go.sum
 plugins/mail.so
 plugins/webhook.so
+config.toml

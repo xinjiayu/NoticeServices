@@ -25,6 +25,25 @@
 参考基础框架中的说明 【[项目结构](https://itician.org/pages/viewpage.action?pageId=3670259#id-%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE-%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84) 】
 
 
+## 通知数据
+
+```
+{
+    "app_id":"dfasdfasdf",
+    "config_id":"3eb5e3d5cd2c71ef6fce3f391c9eabcd",
+    "come_from":"xxxadf",
+    "method":"instant",
+    "method_num":2,
+    "method_task":"*",
+    "msg_title":"3556777744系統故障了",
+    "msg_body":"我们的内容信息",
+    "msg_url":"http://www.aaa.com/aafd",
+    "user_ids":"aaaa|bbbb|cccc",
+    "party_ids":"",
+    "totag":[{"name":"mail","value":"940290@qq.com"},{"name":"webhook","value":"cccc"}]
+}
+```
+
 
 ## 关于build.sh编译脚本
 
