@@ -12,3 +12,13 @@ import (
 type Template internal.Template
 
 // Fill with you ideas below.
+type TemplateData struct {
+	ConfigId    string `orm:"config_id"    json:"config_id"`    //
+	SendGateway string `orm:"send_gateway" json:"send_gateway"` //
+	Title       string `orm:"title"        json:"title"`        //
+	Content     string `orm:"content"      json:"content"`      //
+}
+type TemplateUpData struct {
+	TemplateData
+	Id string
+}

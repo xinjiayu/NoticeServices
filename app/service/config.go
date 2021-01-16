@@ -13,7 +13,7 @@ type configService struct{}
 
 var Config = new(configService)
 
-func (c *configService) Create(data *model.ConfigData) (*model.Config, error) {
+func (c *configService) CreateConfig(data *model.ConfigData) (*model.Config, error) {
 	var cfg *model.Config
 	if err := gconv.Struct(data, &cfg); err != nil {
 		glog.Error(err)
@@ -30,7 +30,7 @@ func (c *configService) Create(data *model.ConfigData) (*model.Config, error) {
 }
 
 //SaveConfig 修改
-func (c *configService) Update(data *model.ConfigUpData) error {
+func (c *configService) UpdateConfig(data *model.ConfigUpData) error {
 	_, err := dao.Config.Data(data).
 		FieldsEx(dao.Config.Columns.Id).
 		Where(dao.Config.Columns.Id, data.Id).
@@ -39,7 +39,7 @@ func (c *configService) Update(data *model.ConfigUpData) error {
 }
 
 //Delete 删除
-func (c *configService) Delete(id string) error {
+func (c *configService) DeleteConfig(id string) error {
 	_, err := dao.Config.Where(dao.Config.Columns.Id, id).Delete()
 	return err
 }

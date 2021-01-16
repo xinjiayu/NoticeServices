@@ -4,6 +4,7 @@ import (
 	"NoticeServices/app/api/app"
 	"NoticeServices/app/api/config"
 	"NoticeServices/app/api/msg"
+	"NoticeServices/app/api/template"
 	"NoticeServices/app/service/middleware"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
@@ -18,6 +19,7 @@ func init() {
 		group.GET("/app", app.Get)
 		group.POST("/msgsend", msg.Send)
 		group.REST("/config", new(config.NoticeConfig))
+		group.REST("/template", new(template.NoticeTemplate))
 
 	})
 }
