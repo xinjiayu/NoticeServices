@@ -17,6 +17,9 @@ func init() {
 
 		group.POST("/app", app.Create)
 		group.GET("/app", app.Get)
+
+		group.GET("/markread", msg.MarkRead)
+		group.GET("/msg", msg.GetMsg)
 		group.POST("/msgsend", msg.Send)
 		group.REST("/config", new(config.NoticeConfig))
 		group.REST("/template", new(template.NoticeTemplate))

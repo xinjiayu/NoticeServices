@@ -27,3 +27,15 @@ type InfoData struct {
 	PartyIds   string `orm:"party_ids"   json:"party_ids"`   //
 	Totag      string `orm:"totag"       json:"totag"`       //
 }
+
+// 组合模型，通知信息
+type EntityInfo struct {
+	UserInfo *internal.UserInfo `json:"user_info"`
+	Info     *MsgInfo           `json:"info"`
+}
+
+type MsgInfo struct {
+	MsgTitle string `orm:"msg_title"   json:"msg_title"` //
+	MsgBody  string `orm:"msg_body"    json:"msg_body"`  //
+	MsgUrl   string `orm:"msg_url"     json:"msg_url"`   //
+}

@@ -9,6 +9,7 @@
 - 预约推送
 - 定期推送
 
+
 ## 逻辑架构图
 
 ![design01](document/design01.jpg)
@@ -23,6 +24,8 @@
 目录结构说明：
 
 参考基础框架中的说明 【[项目结构](https://itician.org/pages/viewpage.action?pageId=3670259#id-%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE-%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84) 】
+
+[公共通知服务API](https://docs.apipost.cn/view/673660105ab26470)
 
 
 ## 通知数据
