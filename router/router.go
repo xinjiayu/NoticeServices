@@ -2,6 +2,7 @@ package router
 
 import (
 	"NoticeServices/app/api/app"
+	"NoticeServices/app/api/config"
 	"NoticeServices/app/api/msg"
 	"NoticeServices/app/service/middleware"
 	"github.com/gogf/gf/frame/g"
@@ -16,6 +17,7 @@ func init() {
 		group.POST("/app", app.Create)
 		group.GET("/app", app.Get)
 		group.POST("/msgsend", msg.Send)
+		group.REST("/config", new(config.NoticeConfig))
 
 	})
 }

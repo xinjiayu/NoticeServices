@@ -56,7 +56,7 @@ func (m *msgService) save(message *model.InfoData) {
 
 	info.State = "1"
 	info.CreateTime = gconv.Int(gtime.Timestamp())
-	if _, err := dao.Info.FieldsEx("id").Data(info).Insert(); err != nil {
+	if _, err := dao.Info.FieldsEx(dao.Info.Columns.Id).Data(info).Insert(); err != nil {
 		glog.Error(err)
 		return
 	}
@@ -64,7 +64,7 @@ func (m *msgService) save(message *model.InfoData) {
 
 //getInfoConfig 读取通知信息的配置文件
 func (m *msgService) getInfoConfig(configId string) (*model.Config, error) {
-	infoConfig, err := dao.Config.FindOne("id", configId)
+	infoConfig, err := dao.Config.FindOne(dao.Config.Columns.Id, configId)
 	if err != nil {
 		glog.Error(err.Error())
 		return nil, err

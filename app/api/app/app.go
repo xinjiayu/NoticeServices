@@ -23,7 +23,7 @@ func Create(r *ghttp.Request) {
 
 	}
 
-	response.JsonExit(r, 0, "数据源返回数据值", data)
+	response.JsonExit(r, 0, "应用申请成功", data)
 
 }
 
