@@ -9,6 +9,7 @@ type Template struct {
 	Id          string `orm:"id"           json:"id"`           //
 	ConfigId    string `orm:"config_id"    json:"config_id"`    //
 	SendGateway string `orm:"send_gateway" json:"send_gateway"` //
+	Code        string `orm:"code"         json:"code"`         //
 	Title       string `orm:"title"        json:"title"`        //
 	Content     string `orm:"content"      json:"content"`      //
 	CreateTime  int    `orm:"create_time"  json:"create_time"`  //

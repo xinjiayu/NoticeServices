@@ -10,6 +10,7 @@ function help() {
 }
 
 function linux(){
+
     CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC=x86_64-linux-musl-gcc CGO_LDFLAGS="-static" go build -a -ldflags "-w -s -X main.BuildVersion=${BuildVersion} -X main.CommitID=${CommitID} -X main.BuildTime=${BuildTime}"
 
     copyFile
@@ -34,7 +35,6 @@ function mac(){
 
     copyFile
     cp curl.sh bin/
-    cp curltopic.sh bin/
 
     cp NoticeServices bin/
 
@@ -44,6 +44,8 @@ function mac(){
 }
 
 function copyFile() {
+  echo "主程序编译完成"
+
     rm -rf bin
     mkdir bin
     cp -r document/. bin/document/
@@ -51,6 +53,32 @@ function copyFile() {
     cp -r public/. bin/public/
     cp -r config/. bin/config/
     cp -r db/. bin/db/
+
+        plugin
+
+}
+
+function plugin() {
+
+    cd ./plugins
+
+    ./build.sh
+
+    cd ../
+
+    mkdir bin/plugins
+    mkdir bin/plugins/mail
+    mkdir bin/plugins/webhook
+
+    cp plugins/mail/mail.so bin/plugins/mail
+    cp plugins/webhook/webhook.so bin/plugins/webhook
+
+    cp plugins/mail/config.toml bin/plugins/mail
+    cp plugins/webhook/config.toml bin/plugins/webhook
+
+    rm -f plugins/mail/mail.so
+    rm -f plugins/webhook/webhook.so
+
 }
 
 

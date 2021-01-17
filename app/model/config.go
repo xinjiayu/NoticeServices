@@ -42,3 +42,9 @@ type ConfigServiceGetListRes struct {
 	Size  int        `json:"size"`  // 分页数量
 	Total int        `json:"total"` // 数据总数
 }
+
+// 组合模型，配置信息
+type EntityConfig struct {
+	Config   *Config            `json:"config"`
+	Template *internal.Template `json:"template"`
+}

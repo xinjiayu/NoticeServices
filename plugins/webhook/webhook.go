@@ -10,8 +10,6 @@ import (
 	"github.com/gogf/gf/util/gconv"
 )
 
-var logger *glog.Logger
-
 type Options struct {
 	PayloadURL string
 	Secret     string
@@ -24,6 +22,8 @@ type WebhookConfig struct {
 	Secret     string
 }
 
+var logger *glog.Logger
+
 func init() {
 	logger = glog.New()
 	logger.SetConfigWithMap(g.Map{
@@ -34,25 +34,25 @@ func init() {
 	})
 }
 
-func Send(msg *model.InfoData) {
+func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 	logger.Info("weebhook发送开始")
 	pluginPath := g.Config().GetString("system.PluginPath")
 	cfgFile := pluginPath + "/webhook/config.toml"
 	cfg := gcfg.New(cfgFile)
 
 	weConfigs := cfg.GetArray("webhook")
-	for _, opData := range weConfigs {
-		op := new(Options)
-		gconv.Struct(opData, op)
-		glog.Info(op.PayloadURL)
 
-		op.Subject = msg.MsgTitle
-		body := gjson.New(msg)
-		bodyJson, err := body.ToJsonString()
-		if err != nil {
-			logger.Error("webhook转换数据出错！")
-		}
-		op.Body = bodyJson
+	op := new(Options)
+	op.Subject = msg.MsgTitle
+	body := gjson.New(msg)
+	bodyJson, err := body.ToJsonString()
+	if err != nil {
+		logger.Error("webhook转换数据出错！")
+	}
+	op.Body = bodyJson
+
+	for _, opData := range weConfigs {
+		gconv.Struct(opData, op)
 		go PostData(op)
 	}
 

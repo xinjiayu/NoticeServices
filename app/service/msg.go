@@ -128,13 +128,22 @@ func (m *msgService) save(message *model.InfoData) {
 }
 
 //getInfoConfig 读取通知信息的配置文件
-func (m *msgService) getInfoConfig(configId string) (*model.Config, error) {
-	infoConfig, err := dao.Config.FindOne(dao.Config.Columns.Id, configId)
+func (m *msgService) getInfoConfig(configId string) (*model.EntityConfig, error) {
+
+	var entityConfig = new(model.EntityConfig)
+	err := dao.Config.Fields("*").Where(dao.Config.Columns.Id, configId).
+		Scan(&entityConfig.Config)
 	if err != nil {
-		glog.Error(err.Error())
 		return nil, err
 	}
-	return infoConfig, nil
+
+	err = dao.Template.Fields("*").Where(dao.Template.Columns.ConfigId, configId).
+		Scan(&entityConfig.Template)
+	if err != nil {
+		return nil, err
+	}
+
+	return entityConfig, nil
 }
 
 //gateWaySend 通过发送通道进行发送
@@ -142,7 +151,8 @@ func (m *msgService) gateWaySend(message *model.InfoData) {
 
 	//获取指定通知的配置信息
 	config, _ := m.getInfoConfig(message.ConfigId)
-	sendGatewayList := gstr.Explode("|", config.SendGateway)
+	//glog.Info("信息配置：", config)
+	sendGatewayList := gstr.Explode("|", config.Config.SendGateway)
 	if sendGatewayList == nil {
 		return
 	}
@@ -177,13 +187,16 @@ func (m *msgService) gateWaySend(message *model.InfoData) {
 		if err != nil {
 			panic(err)
 		}
-		sendFunc, ok := symbol.(func(*model.InfoData))
+		sendFunc, ok := symbol.(func(map[string]interface{}, *model.InfoData))
 
 		if !ok {
 			glog.Error(gerror.New("Plugin has no Send function"))
 			return
 		}
+
 		// 调用插件函数
-		go sendFunc(message)
+		sendParam := make(map[string]interface{})
+		sendParam["code"] = "1122"
+		sendFunc(sendParam, message)
 	}
 }

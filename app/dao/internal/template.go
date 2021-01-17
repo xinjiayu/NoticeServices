@@ -28,6 +28,7 @@ type templateColumns struct {
 	Id          string //
 	ConfigId    string //
 	SendGateway string //
+	Code        string //
 	Title       string //
 	Content     string //
 	CreateTime  string //
@@ -42,6 +43,7 @@ var (
 			Id:          "id",
 			ConfigId:    "config_id",
 			SendGateway: "send_gateway",
+			Code:        "code",
 			Title:       "title",
 			Content:     "content",
 			CreateTime:  "create_time",

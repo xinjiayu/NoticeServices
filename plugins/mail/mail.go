@@ -32,9 +32,7 @@ func init() {
 	})
 }
 
-func Send(msg *model.InfoData) {
-
-	logger.Info("邮件发送开始")
+func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 
 	pluginPath := g.Config().GetString("system.PluginPath")
 	cfgFile := pluginPath + "/mail/config.toml"
@@ -56,7 +54,6 @@ func Send(msg *model.InfoData) {
 		logger.Error(err)
 		return
 	}
-	glog.Info(sendObjectList)
 
 	for _, object := range sendObjectList {
 		if object.Name == "mail" {

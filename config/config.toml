@@ -34,4 +34,4 @@
         link = "./db/notice.db"
         type = "sqlite"
         Level  = "all"
-        Debug = true #是否输出SQL信息
+        Debug = false #是否输出SQL信息

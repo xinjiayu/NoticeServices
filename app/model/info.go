@@ -13,6 +13,10 @@ type Info internal.Info
 
 // Fill with you ideas below.
 
+type SendParam struct {
+	aa map[string]string
+}
+
 type InfoData struct {
 	AppId      string `orm:"app_id"      json:"app_id"`      //
 	ConfigId   string `orm:"config_id"   json:"config_id"`   //
