@@ -164,7 +164,8 @@ func (m *msgService) gateWaySend(message *model.InfoData) {
 		}
 
 		// 加载插件
-		filename := "plugins/" + gatewayName + ".so"
+		pluginPath := g.Config().GetString("system.PluginPath")
+		filename := pluginPath + "/" + gatewayName + "/" + gatewayName + ".so"
 		p, err := plugin.Open(filename)
 		if err != nil {
 			glog.Error(err)
@@ -183,6 +184,6 @@ func (m *msgService) gateWaySend(message *model.InfoData) {
 			return
 		}
 		// 调用插件函数
-		sendFunc(message)
+		go sendFunc(message)
 	}
 }

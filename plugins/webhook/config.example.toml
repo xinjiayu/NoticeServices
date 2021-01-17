@@ -1,0 +1,9 @@
+[[webhook]]
+    PayloadURL = "http://127.0.0.1:8180/test/webhook"
+    Secret = "aaaadfasdfasf"
+[[webhook]]
+    PayloadURL = "http://127.0.0.1:8180/test/webhook2"
+    Secret = "aaaadfasdfasf"
+[[webhook]]
+    PayloadURL = "http://127.0.0.1:8180/test/webhook3"
+    Secret = "aaaadfasdfasf"

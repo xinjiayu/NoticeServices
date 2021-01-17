@@ -3,6 +3,8 @@
     SecretKey = ""
     #可访问IP白名单，如果为空就是允许全部，空：[] ，赋值例值["xxx.xxx.xxx.xxx","xxx.xxx.xxx.xxx"]
     whitelist = []
+    PluginPath = "./plugins"
+
 
 # HTTP Server
 [server]

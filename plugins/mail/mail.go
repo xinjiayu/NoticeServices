@@ -36,7 +36,10 @@ func Send(msg *model.InfoData) {
 
 	logger.Info("邮件发送开始")
 
-	cfg := gcfg.New("config.toml")
+	pluginPath := g.Config().GetString("system.PluginPath")
+	cfgFile := pluginPath + "/mail/config.toml"
+	cfg := gcfg.New(cfgFile)
+
 	if cfg.GetString("MailHost") == "" {
 		logger.Error("发送失败：邮件发送配置文件有误")
 		return
@@ -86,5 +89,5 @@ func sendMail(o *Options) {
 	if err != nil {
 		logger.Error(err)
 	}
-	logger.Info("邮件发送完成")
+	logger.Info(mailArrTo, "邮件发送完成")
 }
