@@ -23,7 +23,20 @@ var Msg = new(msgService)
 func (m *msgService) Send(message *model.InfoData) error {
 
 	//将接收到通知信息存入数据库
-	go m.save(message)
+
+	infoId, err := m.save(message)
+	if err != nil {
+		return err
+	}
+
+	jd := new(model.Job)
+	jd.Name = message.MsgTitle
+	jd.Group = message.Method
+	jd.Params = gconv.String(infoId)       //将通知信息存入库后，将信息ID记录到任务参数中
+	jd.InvokeTarget = "TestMes"            //执行的方法 调用目标字符串
+	jd.CronExpression = message.MethodTask // cron执行表达式
+	jd.Status = 0                          // 状态（0正常 1暂停）
+	jd.CreateTime = gconv.Int(gtime.Timestamp())
 
 	switch message.Method {
 	case boot.Instant:
@@ -31,13 +44,25 @@ func (m *msgService) Send(message *model.InfoData) error {
 		m.gateWaySend(message)
 
 	case boot.Appointment:
-		//TODO:添加预约发送处理
 		glog.Info("预约发送处理==========")
 
-	case boot.Regular:
-		//TODO:添加定期发送处理
-		glog.Info("定期发送处理==========")
+		jd.MisfirePolicy = 2 // 计划执行策略（1多次执行 2执行一次）
+		jobId, err := JobAdd(jd)
+		if err != nil {
+			jd.Id = gconv.Int(jobId)
+			JobStart(jd)
 
+		}
+
+	case boot.Regular:
+		glog.Info("定期发送处理==========")
+		jd.MisfirePolicy = 1 // 计划执行策略（1多次执行 2执行一次）
+		jobId, err := JobAdd(jd)
+		if err != nil {
+			jd.Id = gconv.Int(jobId)
+			JobStart(jd)
+
+		}
 	default:
 		//调用发送通道进行发送
 		m.gateWaySend(message)
@@ -83,11 +108,11 @@ func (m *msgService) GetInfoByUserID(appId, userId string) ([]*model.EntityInfo,
 }
 
 //save 将接收到的发送信息存入到数据库
-func (m *msgService) save(message *model.InfoData) {
+func (m *msgService) save(message *model.InfoData) (int, error) {
 	var info *model.Info
 	if err := gconv.Struct(message, &info); err != nil {
 		glog.Error(err)
-		return
+		return 0, err
 	}
 
 	info.State = "1"
@@ -95,16 +120,16 @@ func (m *msgService) save(message *model.InfoData) {
 	resData, err := dao.Info.FieldsEx(dao.Info.Columns.Id).Data(info).Insert()
 	if err != nil {
 		glog.Error(err)
-		return
+		return 0, err
 	}
 	infoId, err2 := resData.LastInsertId()
 	if err2 != nil {
 		glog.Error(err2)
-		return
+		return 0, err
 	}
 
 	if message.UserIds == "" {
-		return
+		return 0, err
 	}
 
 	//存入用户关系表
@@ -120,11 +145,11 @@ func (m *msgService) save(message *model.InfoData) {
 			userInfo.UserId = u
 			if _, err := dao.UserInfo.FieldsEx(dao.UserInfo.Columns.Id).Insert(userInfo); err != nil {
 				glog.Error(err)
-				return
+				return 0, err
 			}
 		}
 	}
-
+	return 0, nil
 }
 
 //getInfoConfig 读取通知信息的配置文件
@@ -196,7 +221,7 @@ func (m *msgService) gateWaySend(message *model.InfoData) {
 
 		// 调用插件函数
 		sendParam := make(map[string]interface{})
-		sendParam["code"] = "1122"
+		sendParam["code"] = template.Code
 		sendFunc(sendParam, message)
 	}
 }

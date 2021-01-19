@@ -1,6 +1,7 @@
 package main
 
 import (
+	"NoticeServices/app/service"
 	_ "NoticeServices/boot"
 	"NoticeServices/library/version"
 	_ "NoticeServices/router"
@@ -18,4 +19,5 @@ var (
 func main() {
 	version.ShowLogo(BuildVersion, BuildTime, CommitID)
 	g.Server().Run()
+	service.AutoAllTask()
 }

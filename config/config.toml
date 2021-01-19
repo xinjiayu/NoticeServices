@@ -5,6 +5,13 @@
     whitelist = []
     PluginPath = "./plugins"
 
+    LogPath           = "./log/server"
+    LogStdout         = true
+    ErrorStack        = true
+    ErrorLogEnabled   = true
+    ErrorLogPattern   = "error.{Ymd}.log"
+    AccessLogEnabled  = true
+    AccessLogPattern  = "access.{Ymd}.log"
 
 # HTTP Server
 [server]
@@ -16,7 +23,7 @@
 [logger]
     Path   = "./log"
     Level  = "ALL"
-    Stdout = false
+    Stdout = true
     RotateExpire         = "1d"
     RotateBackupLimit    = 1
     RotateBackupExpire   = "7d"

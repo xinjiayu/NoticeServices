@@ -8,16 +8,18 @@ import (
 	"NoticeServices/app/dao/internal"
 )
 
-// infoDao is the manager for logic model data accessing
+// jobDao is the manager for logic model data accessing
 // and custom defined data operations functions management. You can define
 // methods on it to extend its functionality as you wish.
-type infoDao struct {
-	*internal.InfoDao
+type jobDao struct {
+	*internal.JobDao
 }
 
 var (
-	// Info is globally public accessible object for table info operations.
-	Info = &infoDao{
-		internal.Info,
+	// Job is globally public accessible object for table job operations.
+	Job = &jobDao{
+		internal.Job,
 	}
 )
+
+// Fill with you ideas below.

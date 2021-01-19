@@ -4,7 +4,7 @@ import (
 	"NoticeServices/app/model"
 	"NoticeServices/plugins/sms/provider"
 	"NoticeServices/plugins/sms/provider/alisms"
-	"github.com/gogf/gf/frame/g"
+	"NoticeServices/plugins/sms/provider/tencentcloud"
 	"github.com/gogf/gf/os/gcfg"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/util/gconv"
@@ -24,10 +24,15 @@ type WebhookConfig struct {
 
 func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 
-	pluginPath := g.Config().GetString("system.PluginPath")
-	cfgFile := pluginPath + "/sms/config.toml"
+	//pluginPath := g.Config().GetString("system.PluginPath")
+	//cfgFile := pluginPath + "/sms/config.toml"
+	cfgFile := "config.toml" //本地程序直接测试的时候，把上面两句注释掉，打开这一句。执行本程序中的main方法。
 	cfg := gcfg.New(cfgFile)
 	defaultSms := cfg.GetString("DefaultSend")
+	if defaultSms == "" {
+		glog.Error("获取默认短信服务供应商配置出错")
+		return
+	}
 	smsConfig := cfg.GetMap(defaultSms)
 	title := gconv.String(smsConfig["title"])
 	//初始化上下文
@@ -43,12 +48,11 @@ func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 //SmsData
 func SmsData(ctx *provider.Context, msg *model.InfoData) {
 	var instance provider.SmsProviderInterface
-
 	switch ctx.ProviderName {
 	case "alisms":
 		instance = &alisms.Instance{}
-	case "qcloud":
-		glog.Info("qcloud 短信提供商进行发送")
+	case "tencentcloud":
+		instance = &tencentcloud.Instance{}
 
 	default:
 
@@ -63,8 +67,11 @@ func SmsData(ctx *provider.Context, msg *model.InfoData) {
 
 }
 
-//测试插件是否可用
+////测试插件是否可用
 //func main() {
+//
+//	sendParam := make(map[string]interface{})
+//	sendParam["code"] = "1122"
 //
 //	var msg = new(model.InfoData)
 //	msg.AppId = "dfasdfasdf"
@@ -79,7 +86,6 @@ func SmsData(ctx *provider.Context, msg *model.InfoData) {
 //	msg.UserIds = "aaaa|bbbb|cccc"
 //	msg.PartyIds = ""
 //	msg.Totag = "[{\"name\":\"mail\",\"value\":\"xinjy@neusoft.com\"},{\"name\":\"webhook\",\"value\":\"cccc\"},{\"name\":\"sms\",\"value\":\"13700005102\"}]"
-//	unit.Logger.Info("开始进行测试。。。。")
-//	Send(msg)
+//	Send(sendParam, msg)
 //
 //}

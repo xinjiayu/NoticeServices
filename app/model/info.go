@@ -43,3 +43,5 @@ type MsgInfo struct {
 	MsgBody  string `orm:"msg_body"    json:"msg_body"`  //
 	MsgUrl   string `orm:"msg_url"     json:"msg_url"`   //
 }
+
+// Fill with you ideas below.

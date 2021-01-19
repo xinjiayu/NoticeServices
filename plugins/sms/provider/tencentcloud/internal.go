@@ -1,4 +1,4 @@
-package alisms
+package tencentcloud
 
 import (
 	"NoticeServices/app/model"
@@ -26,15 +26,12 @@ type Instance struct {
 }
 
 func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
-
 	smsConfig := ctx.SmsConfig
 	logger.Info("sms发送开始")
-	keyId := gconv.String(smsConfig["keyid"])
-	secret := gconv.String(smsConfig["secret"])
-	regionId := gconv.String(smsConfig["region_id"])
+	secretKey := gconv.String(smsConfig["secretKey"])
+	secretId := gconv.String(smsConfig["secretId"])
 	signName := gconv.String(smsConfig["sign_name"]) //短信签名
 	tplCode := gconv.String(ctx.SendParam["code"])
-
 	var sendObjectList []model.SendObject
 	err := gjson.DecodeTo(msg.Totag, &sendObjectList)
 	if err != nil {
@@ -43,6 +40,7 @@ func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
 
 	//发送的信息内容采用|线进行内容分割
 	TemplateParam := gstr.Explode("|", msg.MsgBody)
+
 	var phoneNumbers []string
 	for _, object := range sendObjectList {
 		if object.Name == "sms" {
@@ -50,7 +48,7 @@ func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
 		}
 	}
 
-	result, err := New(regionId, keyId, secret, signName).
+	result, err := New(secretId, secretKey, signName).
 		Request(tplCode, TemplateParam, phoneNumbers)
 
 	if err != nil {

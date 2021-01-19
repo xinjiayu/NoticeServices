@@ -47,6 +47,20 @@
 }
 ```
 
+method：信息的任务方式，取值范围为：instant、appointment、regular
+
+instant：即时发送
+appointment：预约发送
+regular：定期发送
+
+
+## 使用说明
+
+
+### 短信发送
+
+发送内容如果是多个值的，msg_body中的内容要采用|分割。每个值对应短信模板中的可替换变量。
+
 
 ## 关于build.sh编译脚本
 
