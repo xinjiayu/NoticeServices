@@ -5,6 +5,7 @@ import (
 	"NoticeServices/plugins/sms/provider"
 	"NoticeServices/plugins/sms/provider/alisms"
 	"NoticeServices/plugins/sms/provider/tencentcloud"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gcfg"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/util/gconv"
@@ -24,9 +25,9 @@ type WebhookConfig struct {
 
 func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 
-	//pluginPath := g.Config().GetString("system.PluginPath")
-	//cfgFile := pluginPath + "/sms/config.toml"
-	cfgFile := "config.toml" //本地程序直接测试的时候，把上面两句注释掉，打开这一句。执行本程序中的main方法。
+	pluginPath := g.Config().GetString("system.PluginPath")
+	cfgFile := pluginPath + "/sms/config.toml"
+	//cfgFile := "config.toml" //本地程序直接测试的时候，把上面两句注释掉，打开这一句。执行本程序中的main方法。
 	cfg := gcfg.New(cfgFile)
 	defaultSms := cfg.GetString("DefaultSend")
 	if defaultSms == "" {

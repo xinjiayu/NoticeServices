@@ -41,7 +41,7 @@ func GetJobs() (jobs []*model.Job, err error) {
 
 //添加计划任务
 func JobAdd(jobData *model.Job) (id int64, err error) {
-
+	glog.Info("======添加任务=======", jobData.Name)
 	res, err := dao.Job.FieldsEx(dao.Job.Columns.Id).Insert(jobData)
 	if err != nil {
 		glog.Error(err)
@@ -58,6 +58,7 @@ func JobAdd(jobData *model.Job) (id int64, err error) {
 //启动任务
 func JobStart(job *model.Job) error {
 	//可以task目录下是否绑定对应的方法
+	glog.Info("======启动任务======", job.InvokeTarget)
 	f := task.GetByName(job.InvokeTarget)
 	if f == nil {
 		return gerror.New("当前task目录下没有绑定这个方法")
@@ -82,7 +83,7 @@ func JobStart(job *model.Job) error {
 	gcron.Start(job.InvokeTarget)
 	if job.MisfirePolicy == 1 {
 		job.Status = 0
-		dao.Job.Save(job)
+		dao.Job.Update(job)
 	}
 	return nil
 }
@@ -99,11 +100,6 @@ func JobStop(job *model.Job) error {
 		gcron.Remove(job.InvokeTarget)
 	}
 	job.Status = 1
-	dao.Job.Save(job)
+	dao.Job.Update(job)
 	return nil
-}
-
-//GetOneInfo 获取一条记录
-func GetOneInfo(id string) (*model.Info, error) {
-	return dao.Info.Where("id", id).One()
 }

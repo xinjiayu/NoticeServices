@@ -18,6 +18,6 @@ var (
 
 func main() {
 	version.ShowLogo(BuildVersion, BuildTime, CommitID)
-	g.Server().Run()
 	service.AutoAllTask()
+	g.Server().Run()
 }

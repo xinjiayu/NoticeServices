@@ -3,16 +3,14 @@ package service
 import (
 	"NoticeServices/app/dao"
 	"NoticeServices/app/model"
+	"NoticeServices/app/notifieer"
 	"NoticeServices/boot"
-	"NoticeServices/library/tools"
-	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gutil"
-	"plugin"
 )
 
 type msgService struct{}
@@ -33,7 +31,7 @@ func (m *msgService) Send(message *model.InfoData) error {
 	jd.Name = message.MsgTitle
 	jd.Group = message.Method
 	jd.Params = gconv.String(infoId)       //将通知信息存入库后，将信息ID记录到任务参数中
-	jd.InvokeTarget = "TestMes"            //执行的方法 调用目标字符串
+	jd.InvokeTarget = "JobSendMessage"     //执行的方法 调用目标字符串
 	jd.CronExpression = message.MethodTask // cron执行表达式
 	jd.Status = 0                          // 状态（0正常 1暂停）
 	jd.CreateTime = gconv.Int(gtime.Timestamp())
@@ -41,31 +39,34 @@ func (m *msgService) Send(message *model.InfoData) error {
 	switch message.Method {
 	case boot.Instant:
 		//调用发送通道进行发送
-		m.gateWaySend(message)
+		//m.gateWaySend(message)
+		notifieer.Instance.GateWaySend(message)
 
 	case boot.Appointment:
 		glog.Info("预约发送处理==========")
-
-		jd.MisfirePolicy = 2 // 计划执行策略（1多次执行 2执行一次）
+		jd.MisfirePolicy = 2 // 计划执行策略（执行一次）
 		jobId, err := JobAdd(jd)
 		if err != nil {
-			jd.Id = gconv.Int(jobId)
-			JobStart(jd)
-
+			glog.Error(err)
 		}
+		jd.Id = gconv.Int(jobId)
+		JobStart(jd)
 
 	case boot.Regular:
 		glog.Info("定期发送处理==========")
-		jd.MisfirePolicy = 1 // 计划执行策略（1多次执行 2执行一次）
+		jd.MisfirePolicy = 1 // 计划执行策略（多次执行）
 		jobId, err := JobAdd(jd)
 		if err != nil {
-			jd.Id = gconv.Int(jobId)
-			JobStart(jd)
-
+			glog.Error(err)
 		}
+		jd.Id = gconv.Int(jobId)
+		JobStart(jd)
+
 	default:
 		//调用发送通道进行发送
-		m.gateWaySend(message)
+		//m.gateWaySend(message)
+		notifieer.Instance.GateWaySend(message)
+
 	}
 
 	return nil
@@ -149,79 +150,5 @@ func (m *msgService) save(message *model.InfoData) (int, error) {
 			}
 		}
 	}
-	return 0, nil
-}
-
-//getInfoConfig 读取通知信息的配置文件
-func (m *msgService) getInfoConfig(configId string) (*model.EntityConfig, error) {
-
-	var entityConfig = new(model.EntityConfig)
-	err := dao.Config.Fields("*").Where(dao.Config.Columns.Id, configId).
-		Scan(&entityConfig.Config)
-	if err != nil {
-		return nil, err
-	}
-
-	err = dao.Template.Fields("*").Where(dao.Template.Columns.ConfigId, configId).
-		Scan(&entityConfig.Template)
-	if err != nil {
-		return nil, err
-	}
-
-	return entityConfig, nil
-}
-
-//gateWaySend 通过发送通道进行发送
-func (m *msgService) gateWaySend(message *model.InfoData) {
-
-	//获取指定通知的配置信息
-	config, _ := m.getInfoConfig(message.ConfigId)
-	//glog.Info("信息配置：", config)
-	sendGatewayList := gstr.Explode("|", config.Config.SendGateway)
-	if sendGatewayList == nil {
-		return
-	}
-
-	messageBaseBody := message.MsgBody
-	for _, gatewayName := range sendGatewayList {
-		message.MsgBody = messageBaseBody
-
-		//获取发送通道的通知模板
-		where := g.Map{
-			"config_id":    message.ConfigId,
-			"send_gateway": gatewayName,
-		}
-		template, err := dao.Template.FindOne(where)
-		if template != nil {
-			paramDataMap := gconv.Map(message)
-			message.MsgBody = tools.StringLiteralTemplate(template.Content, paramDataMap)
-
-		}
-
-		// 加载插件
-		pluginPath := g.Config().GetString("system.PluginPath")
-		filename := pluginPath + "/" + gatewayName + "/" + gatewayName + ".so"
-		p, err := plugin.Open(filename)
-		if err != nil {
-			glog.Error(err)
-			return
-		}
-
-		// 查找插件里的指定函数
-		symbol, err := p.Lookup("Send")
-		if err != nil {
-			panic(err)
-		}
-		sendFunc, ok := symbol.(func(map[string]interface{}, *model.InfoData))
-
-		if !ok {
-			glog.Error(gerror.New("Plugin has no Send function"))
-			return
-		}
-
-		// 调用插件函数
-		sendParam := make(map[string]interface{})
-		sendParam["code"] = template.Code
-		sendFunc(sendParam, message)
-	}
+	return gconv.Int(infoId), nil
 }

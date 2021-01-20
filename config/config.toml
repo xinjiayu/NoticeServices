@@ -5,19 +5,12 @@
     whitelist = []
     PluginPath = "./plugins"
 
-    LogPath           = "./log/server"
-    LogStdout         = true
-    ErrorStack        = true
-    ErrorLogEnabled   = true
-    ErrorLogPattern   = "error.{Ymd}.log"
-    AccessLogEnabled  = true
-    AccessLogPattern  = "access.{Ymd}.log"
-
 # HTTP Server
 [server]
 	Address     = ":8199"
 	ServerRoot  = "public"
 	ServerAgent = "NoticeServices"
+    DumpRouterMap    = false #是否打印路由信息
 
 # Logger.
 [logger]
@@ -41,4 +34,4 @@
         link = "./db/notice.db"
         type = "sqlite"
         Level  = "all"
-        Debug = false #是否输出SQL信息
+        Debug = true #是否输出SQL信息
