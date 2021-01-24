@@ -61,6 +61,7 @@ func SmsData(ctx *provider.Context, msg *model.InfoData) {
 
 	}
 
+	glog.Info("发达短信供应商：", ctx.ProviderTitle)
 	err := instance.SendSms(ctx, msg)
 	if err != nil {
 		glog.Error(err)
@@ -72,17 +73,17 @@ func SmsData(ctx *provider.Context, msg *model.InfoData) {
 //func main() {
 //
 //	sendParam := make(map[string]interface{})
-//	sendParam["code"] = "1122"
+//	sendParam["code"] = "SMS_185570003"
 //
 //	var msg = new(model.InfoData)
 //	msg.AppId = "dfasdfasdf"
 //	msg.ConfigId = "3eb5e3d5cd2c71ef6fce3f391c9eabcd"
 //	msg.ComeFrom = "xxxadf"
-//	msg.Method = "instant"
+//	msg.Method = "222instant"
 //	msg.MethodNum = 1
-//	msg.MethodTask = "*"
+//	msg.MethodCron = "*"
 //	msg.MsgTitle = "3556777744系統故障了"
-//	msg.MsgBody = "我们的内容信息"
+//	msg.MsgBody = "{\"code\":5432}"
 //	msg.MsgUrl = "http://www.baidu.com"
 //	msg.UserIds = "aaaa|bbbb|cccc"
 //	msg.PartyIds = ""

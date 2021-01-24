@@ -38,7 +38,7 @@ type infoColumns struct {
 	Totag      string //
 	State      string //
 	CreateTime string //
-	MethodTask string //
+	MethodCron string //
 	MethodNum  string //
 }
 
@@ -61,7 +61,7 @@ var (
 			Totag:      "totag",
 			State:      "state",
 			CreateTime: "create_time",
-			MethodTask: "method_task",
+			MethodCron: "method_cron",
 			MethodNum:  "method_num",
 		},
 	}

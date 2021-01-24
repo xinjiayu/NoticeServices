@@ -22,7 +22,7 @@ type InfoData struct {
 	ConfigId   string `orm:"config_id"   json:"config_id"`   //
 	ComeFrom   string `orm:"come_from"   json:"come_from"`   //
 	Method     string `orm:"method"      json:"method"`      //
-	MethodTask string `orm:"method_task" json:"method_task"` //
+	MethodCron string `orm:"method_cron" json:"method_cron"` //
 	MethodNum  int    `orm:"method_num"  json:"method_num"`  //
 	MsgTitle   string `orm:"msg_title"   json:"msg_title"`   //
 	MsgBody    string `orm:"msg_body"    json:"msg_body"`    //

@@ -6,7 +6,6 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 )
 
@@ -29,8 +28,8 @@ func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
 
 	smsConfig := ctx.SmsConfig
 	logger.Info("sms发送开始")
-	keyId := gconv.String(smsConfig["keyid"])
-	secret := gconv.String(smsConfig["secret"])
+	keyId := gconv.String(smsConfig["AccessKeyId"])
+	secret := gconv.String(smsConfig["accessSecret"])
 	regionId := gconv.String(smsConfig["region_id"])
 	signName := gconv.String(smsConfig["sign_name"]) //短信签名
 	tplCode := gconv.String(ctx.SendParam["code"])
@@ -42,7 +41,6 @@ func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
 	}
 
 	//发送的信息内容采用|线进行内容分割
-	TemplateParam := gstr.Explode("|", msg.MsgBody)
 	var phoneNumbers []string
 	for _, object := range sendObjectList {
 		if object.Name == "sms" {
@@ -51,7 +49,7 @@ func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
 	}
 
 	result, err := New(regionId, keyId, secret, signName).
-		Request(tplCode, TemplateParam, phoneNumbers)
+		Request(tplCode, msg.MsgBody, phoneNumbers)
 
 	if err != nil {
 		logger.Error(err)

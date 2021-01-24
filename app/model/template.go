@@ -15,6 +15,7 @@ type Template internal.Template
 type TemplateData struct {
 	ConfigId    string `orm:"config_id"    json:"config_id"`    //
 	SendGateway string `orm:"send_gateway" json:"send_gateway"` //
+	Code        string `orm:"code"        json:"code"`          //
 	Title       string `orm:"title"        json:"title"`        //
 	Content     string `orm:"content"      json:"content"`      //
 }

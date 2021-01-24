@@ -1,9 +1,11 @@
 package alisms
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
+	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/util/gconv"
+	"strings"
 )
 
 type Sender struct {
@@ -20,7 +22,6 @@ func New(regionId, keyId, secret, signName string) *Sender {
 	if err != nil {
 		panic(err)
 	}
-
 	sd := &Sender{}
 	sd.SignName = signName
 
@@ -30,24 +31,20 @@ func New(regionId, keyId, secret, signName string) *Sender {
 }
 
 // 发送请求
-func (sd *Sender) Request(TemplateCode string, TemplateParam, phoneNumbers []string) (string, error) {
+func (sd *Sender) Request(TemplateCode, TemplateParam string, phoneNumbers []string) (string, error) {
 
-	templates, _ := json.Marshal(TemplateParam)
 	request := dysmsapi.CreateSendSmsRequest()
 	request.Scheme = "https"
 
-	request.SignName = sd.SignName //签名不能为空
+	request.PhoneNumbers = strings.Replace(strings.Trim(fmt.Sprint(phoneNumbers), "[]"), " ", ",", -1)
+	request.SignName = sd.SignName
 	request.TemplateCode = TemplateCode
-	request.TemplateParam = string(templates)
+	request.TemplateParam = TemplateParam
 
-	for _, phone := range phoneNumbers {
-		request.PhoneNumbers = phone
-		//这里需要解析下 判断返回状态码
-		response, err := sd.Client.SendSms(request)
-		if err != nil {
-			return gconv.String(response), err
-		}
+	glog.Info(request)
+	response, err := sd.Client.SendSms(request)
+	if err != nil {
+		return "", err
 	}
-
-	return "", nil
+	return gconv.String(response), nil
 }

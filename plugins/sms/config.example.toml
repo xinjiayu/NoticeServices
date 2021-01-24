@@ -1,14 +1,14 @@
-DefaultSend = "tencentcloud"
+DefaultSend = "alisms"
 
 [alisms]
-title = "阿里云"
-region_id = ""
-keyId = ""
-secret = ""
-sign_name = "沙果学习"
+    title = "阿里云"
+    region_id = "cn-hangzhou"
+    AccessKeyId = "adsfasfdfsdfdf"
+    accessSecret = "afadsfasdf"
+    sign_name = "XXX科技"
 
 [tencentcloud]
-title = "腾讯云 SMS"
-secretId = ""
-secretKey = ""
-sign_name = "" #短信签名，如果使用默认签名，该字段可缺省（对应官方文档中的sign）
+    title = "腾讯云 SMS"
+    secretId = ""
+    secretKey = ""
+    sign_name = "" #短信签名，如果使用默认签名，该字段可缺省（对应官方文档中的sign）

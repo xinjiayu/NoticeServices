@@ -32,7 +32,7 @@ func (m *msgService) Send(message *model.InfoData) error {
 	jd.Group = message.Method
 	jd.Params = gconv.String(infoId)       //将通知信息存入库后，将信息ID记录到任务参数中
 	jd.InvokeTarget = "JobSendMessage"     //执行的方法 调用目标字符串
-	jd.CronExpression = message.MethodTask // cron执行表达式
+	jd.CronExpression = message.MethodCron // cron执行表达式
 	jd.Status = 0                          // 状态（0正常 1暂停）
 	jd.CreateTime = gconv.Int(gtime.Timestamp())
 

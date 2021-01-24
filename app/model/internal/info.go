@@ -19,6 +19,6 @@ type Info struct {
 	Totag      string `orm:"totag"       json:"totag"`       //
 	State      string `orm:"state"       json:"state"`       //
 	CreateTime int    `orm:"create_time" json:"create_time"` //
-	MethodTask string `orm:"method_task" json:"method_task"` //
+	MethodCron string `orm:"method_cron" json:"method_cron"` //
 	MethodNum  int    `orm:"method_num"  json:"method_num"`  //
 }
