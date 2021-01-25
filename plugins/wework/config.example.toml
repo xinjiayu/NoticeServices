@@ -1,0 +1,6 @@
+[weworkAlarm]
+    Corpid = "wewrw" #企业ID
+    AgentID = 1000002
+    Secret = "wrwerwrwerwr"
+    Token = "rwerwer"
+    EncodingAESKey = "wrwerwer"

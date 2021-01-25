@@ -17,8 +17,6 @@ cbuild
 main
 .vscode
 go.sum
-plugins/mail/mail.so
-plugins/webhook/webhook.so
-plugins/sms/sms.so
+*.so
 
 config.toml

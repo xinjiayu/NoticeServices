@@ -44,6 +44,7 @@ func (n *instance) GateWaySend(message *model.InfoData) {
 
 		}
 
+		glog.Info("=== 加载发送通道：", gatewayName)
 		// 加载插件
 		pluginPath := g.Config().GetString("system.PluginPath")
 		filename := pluginPath + "/" + gatewayName + "/" + gatewayName + ".so"

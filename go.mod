@@ -2,6 +2,7 @@ module NoticeServices
 
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.861
+	github.com/fastwego/wxwork v1.0.0-beta.8
 	github.com/gogf/gf v1.15.1-0.20210116143148-91e29e23a4bc
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
