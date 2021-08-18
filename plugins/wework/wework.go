@@ -1,7 +1,7 @@
 package main
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/plugins/wework/internal"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
@@ -21,7 +21,7 @@ func init() {
 	})
 }
 
-func Send(sendParam map[string]interface{}, msg *model.InfoData) {
+func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 	logger.Info("wework发送开始")
 	pluginPath := g.Config().GetString("system.PluginPath")
 	cfgFile := pluginPath + "/wework/config.toml"
@@ -29,7 +29,7 @@ func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 	//cfgFile := "config.toml" //用于本地main方法直接测试使用，需要将上面的配置注释掉
 
 	cfg := gcfg.New(cfgFile)
-	var sendObjectList []model.SendObject
+	var sendObjectList []define.SendObject
 	err := gjson.DecodeTo(msg.Totag, &sendObjectList)
 	if err != nil {
 		logger.Error(err)

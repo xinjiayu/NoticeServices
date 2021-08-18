@@ -1,7 +1,7 @@
 package main
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/plugins/sms/provider"
 	"NoticeServices/plugins/sms/provider/alisms"
 	"NoticeServices/plugins/sms/provider/tencentcloud"
@@ -23,7 +23,8 @@ type WebhookConfig struct {
 	Secret     string
 }
 
-func Send(sendParam map[string]interface{}, msg *model.InfoData) {
+//goland:noinspection ALL
+func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 
 	pluginPath := g.Config().GetString("system.PluginPath")
 	cfgFile := pluginPath + "/sms/config.toml"
@@ -47,7 +48,7 @@ func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 }
 
 //SmsData
-func SmsData(ctx *provider.Context, msg *model.InfoData) {
+func SmsData(ctx *provider.Context, msg *define.InfoData) {
 	var instance provider.SmsProviderInterface
 	switch ctx.ProviderName {
 	case "alisms":

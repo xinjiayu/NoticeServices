@@ -10,47 +10,36 @@ import (
 	"github.com/gogf/gf/frame/g"
 )
 
-// AppDao is the manager for logic model data accessing and custom defined data operations functions management.
-type AppDao struct {
+// AaaDao is the manager for logic model data accessing and custom defined data operations functions management.
+type AaaDao struct {
 	Table   string     // Table is the underlying table name of the DAO.
 	Group   string     // Group is the database configuration group name of current DAO.
-	Columns AppColumns // Columns is the short type for Columns, which contains all the column names of Table for convenient usage.
+	Columns AaaColumns // Columns is the short type for Columns, which contains all the column names of Table for convenient usage.
 }
 
-// AppColumns defines and stores column names for table app.
-type AppColumns struct {
-	Id          string //
-	Name        string //
-	Explain     string //
-	AccessToken string //
-	CreateTime  string //
+// AaaColumns defines and stores column names for table aaa.
+type AaaColumns struct {
 }
 
-//  appColumns holds the columns for table app.
-var appColumns = AppColumns{
-	Id:          "id",
-	Name:        "name",
-	Explain:     "explain",
-	AccessToken: "access_token",
-	CreateTime:  "create_time",
-}
+//  aaaColumns holds the columns for table aaa.
+var aaaColumns = AaaColumns{}
 
-// NewAppDao creates and returns a new DAO object for table data access.
-func NewAppDao() *AppDao {
-	return &AppDao{
+// NewAaaDao creates and returns a new DAO object for table data access.
+func NewAaaDao() *AaaDao {
+	return &AaaDao{
 		Group:   "default",
-		Table:   "app",
-		Columns: appColumns,
+		Table:   "aaa",
+		Columns: aaaColumns,
 	}
 }
 
 // DB retrieves and returns the underlying raw database management object of current DAO.
-func (dao *AppDao) DB() gdb.DB {
+func (dao *AaaDao) DB() gdb.DB {
 	return g.DB(dao.Group)
 }
 
 // Ctx creates and returns the Model for current DAO, It automatically sets the context for current operation.
-func (dao *AppDao) Ctx(ctx context.Context) *gdb.Model {
+func (dao *AaaDao) Ctx(ctx context.Context) *gdb.Model {
 	return dao.DB().Model(dao.Table).Safe().Ctx(ctx)
 }
 
@@ -60,6 +49,6 @@ func (dao *AppDao) Ctx(ctx context.Context) *gdb.Model {
 //
 // Note that, you should not Commit or Rollback the transaction in function f
 // as it is automatically handled by this function.
-func (dao *AppDao) Transaction(ctx context.Context, f func(ctx context.Context, tx *gdb.TX) error) (err error) {
+func (dao *AaaDao) Transaction(ctx context.Context, f func(ctx context.Context, tx *gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }

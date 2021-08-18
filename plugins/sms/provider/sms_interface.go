@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 )
 
 // Context 上下文
@@ -14,5 +14,5 @@ type Context struct {
 }
 
 type SmsProviderInterface interface {
-	SendSms(ctx *Context, msg *model.InfoData) error
+	SendSms(ctx *Context, msg *define.InfoData) error
 }

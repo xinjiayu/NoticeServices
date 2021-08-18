@@ -1,7 +1,7 @@
 package template
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
 	"github.com/gogf/gf/net/ghttp"
@@ -37,7 +37,7 @@ func (n *NoticeTemplate) Get(r *ghttp.Request) {
 }
 
 func (n *NoticeTemplate) Post(r *ghttp.Request) {
-	var data *model.TemplateData
+	var data *define.TemplateData
 	err := r.Parse(&data)
 	if err != nil {
 		response.JsonExit(r, 1, "数据有错误", err.Error())
@@ -53,7 +53,7 @@ func (n *NoticeTemplate) Post(r *ghttp.Request) {
 }
 
 func (n *NoticeTemplate) Put(r *ghttp.Request) {
-	var data *model.TemplateUpData
+	var data *define.TemplateUpData
 	err := r.Parse(&data)
 	if err != nil {
 		response.JsonExit(r, 1, "数据有错误", err.Error())

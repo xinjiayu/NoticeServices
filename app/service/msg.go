@@ -2,9 +2,11 @@ package service
 
 import (
 	"NoticeServices/app/dao"
+	"NoticeServices/app/define"
 	"NoticeServices/app/model"
 	"NoticeServices/app/notifieer"
 	"NoticeServices/boot"
+	"context"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/os/gtime"
@@ -18,7 +20,7 @@ type msgService struct{}
 var Msg = new(msgService)
 
 //Send 发送信息
-func (m *msgService) Send(message *model.InfoData) error {
+func (m *msgService) Send(message *define.InfoData) error {
 
 	//将接收到通知信息存入数据库
 
@@ -50,7 +52,9 @@ func (m *msgService) Send(message *model.InfoData) error {
 			glog.Error(err)
 		}
 		jd.Id = gconv.Int(jobId)
-		JobStart(jd)
+		if err = JobStart(jd); err != nil {
+			glog.Error(err)
+		}
 
 	case boot.Regular:
 		glog.Info("定期发送处理==========")
@@ -60,7 +64,9 @@ func (m *msgService) Send(message *model.InfoData) error {
 			glog.Error(err)
 		}
 		jd.Id = gconv.Int(jobId)
-		JobStart(jd)
+		if err = JobStart(jd); err != nil {
+			glog.Error(err)
+		}
 
 	default:
 		//调用发送通道进行发送
@@ -73,9 +79,9 @@ func (m *msgService) Send(message *model.InfoData) error {
 
 }
 
-//标记用户的通知信息为已讯状态
+//MarkRead 标记用户的通知信息为已讯状态
 func (m *msgService) MarkRead(id string) error {
-	_, err := dao.UserInfo.
+	_, err := dao.UserInfo.Ctx(context.TODO()).
 		Data(g.Map{dao.UserInfo.Columns.Status: 1}).
 		WherePri(id).Update()
 	if err != nil {
@@ -85,21 +91,21 @@ func (m *msgService) MarkRead(id string) error {
 }
 
 // GetInfoByUserID 通过app_id 与user_id 获取用户的通知信息列表
-func (m *msgService) GetInfoByUserID(appId, userId string) ([]*model.EntityInfo, error) {
+func (m *msgService) GetInfoByUserID(appId, userId string) ([]*define.EntityInfo, error) {
 
 	uWhere := g.Map{
 		dao.UserInfo.Columns.AppId:  appId,
 		dao.UserInfo.Columns.UserId: userId,
 	}
-	var entityInfos []*model.EntityInfo
+	var entityInfos []*define.EntityInfo
 
-	err := dao.UserInfo.Fields("*").Where(uWhere).
+	err := dao.UserInfo.Ctx(context.TODO()).Fields("*").Where(uWhere).
 		ScanList(&entityInfos, "UserInfo")
 	if err != nil {
 		return nil, err
 	}
 
-	err = dao.Info.Fields("id,msg_title,msg_body,msg_url").Where(dao.Info.Columns.Id, gutil.ListItemValues(&entityInfos, "UserInfo", "InfoId")).
+	err = dao.Info.Ctx(context.TODO()).Fields("id,msg_title,msg_body,msg_url").Where(dao.Info.Columns.Id, gutil.ListItemValues(&entityInfos, "UserInfo", "InfoId")).
 		ScanList(&entityInfos, "Info")
 	if err != nil {
 		return nil, err
@@ -109,7 +115,7 @@ func (m *msgService) GetInfoByUserID(appId, userId string) ([]*model.EntityInfo,
 }
 
 //save 将接收到的发送信息存入到数据库
-func (m *msgService) save(message *model.InfoData) (int, error) {
+func (m *msgService) save(message *define.InfoData) (int, error) {
 	var info *model.Info
 	if err := gconv.Struct(message, &info); err != nil {
 		glog.Error(err)
@@ -118,7 +124,7 @@ func (m *msgService) save(message *model.InfoData) (int, error) {
 
 	info.State = "1"
 	info.CreateTime = gconv.Int(gtime.Timestamp())
-	resData, err := dao.Info.FieldsEx(dao.Info.Columns.Id).Data(info).Insert()
+	resData, err := dao.Info.Ctx(context.TODO()).FieldsEx(dao.Info.Columns.Id).Data(info).Insert()
 	if err != nil {
 		glog.Error(err)
 		return 0, err
@@ -144,7 +150,7 @@ func (m *msgService) save(message *model.InfoData) (int, error) {
 	if userList != nil {
 		for _, u := range userList {
 			userInfo.UserId = u
-			if _, err := dao.UserInfo.FieldsEx(dao.UserInfo.Columns.Id).Insert(userInfo); err != nil {
+			if _, err := dao.UserInfo.Ctx(context.TODO()).FieldsEx(dao.UserInfo.Columns.Id).Insert(userInfo); err != nil {
 				glog.Error(err)
 				return 0, err
 			}

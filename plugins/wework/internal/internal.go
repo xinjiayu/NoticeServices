@@ -27,7 +27,9 @@ func GetInstance(corpid, agentID, secret, token, encodingAESKey string) *Alarm {
 	// 加载应用的配置
 	appConfigInfo := g.Cfg().Get("wework.alarm", corporation.AppConfig{})
 	p := gparser.New(appConfigInfo)
-	p.Struct(&instance.AppConfig)
+	if err := p.Struct(&instance.AppConfig); err != nil {
+		glog.Error(err)
+	}
 
 	instance.AppConfig.Token = token
 	instance.AppConfig.AgentId = agentID
@@ -52,9 +54,9 @@ func (e *Alarm) SendMessage(toUser, content string) (interface{}, error) {
 	sendMsg.Text.Content = content
 	sendMsg.DuplicateCheckInterval = 1800
 
-	json := ToJson(sendMsg)
+	jsonByte := ToJson(sendMsg)
 
-	resp, err := message.Send(e.CorpApp, json)
+	resp, err := message.Send(e.CorpApp, jsonByte)
 	if err != nil {
 		return nil, err
 	}
@@ -62,9 +64,9 @@ func (e *Alarm) SendMessage(toUser, content string) (interface{}, error) {
 }
 
 func ToJson(data interface{}) []byte {
-	json, err := json.Marshal(data)
+	jsonByte, err := json.Marshal(data)
 	if err != nil {
 		glog.Error(err)
 	}
-	return json
+	return jsonByte
 }

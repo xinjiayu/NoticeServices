@@ -1,7 +1,7 @@
 package config
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
 	"github.com/gogf/gf/net/ghttp"
@@ -22,7 +22,7 @@ func (nc *NoticeConfig) Get(r *ghttp.Request) {
 	}
 
 	//获取多条记录
-	var reqData *model.ConfigServiceGetListReq
+	var reqData *define.ConfigServiceGetListReq
 	err := r.Parse(&reqData)
 	if err != nil {
 		response.JsonExit(r, 1, "提交的参数数据有错误", err.Error())
@@ -37,7 +37,7 @@ func (nc *NoticeConfig) Get(r *ghttp.Request) {
 }
 
 func (nc *NoticeConfig) Post(r *ghttp.Request) {
-	var data *model.ConfigData
+	var data *define.ConfigData
 	err := r.Parse(&data)
 	if err != nil {
 		response.JsonExit(r, 1, "数据有错误", err.Error())
@@ -54,7 +54,7 @@ func (nc *NoticeConfig) Post(r *ghttp.Request) {
 }
 
 func (nc *NoticeConfig) Put(r *ghttp.Request) {
-	var data *model.ConfigUpData
+	var data *define.ConfigUpData
 	err := r.Parse(&data)
 	if err != nil {
 		response.JsonExit(r, 1, "数据有错误", err.Error())

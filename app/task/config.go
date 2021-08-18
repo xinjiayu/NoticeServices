@@ -1,6 +1,9 @@
 package task
 
-import "github.com/gogf/gf/container/garray"
+import (
+	"github.com/gogf/gf/container/garray"
+	"github.com/gogf/gf/os/glog"
+)
 
 type Entity struct {
 	FuncName string
@@ -34,13 +37,15 @@ func GetByName(funcName string) *Entity {
 	return result
 }
 
-//修改参数
+//EditParams 修改参数
 func EditParams(funcName string, params []string) {
 	for index, item := range taskList.Slice() {
 		task := item.(Entity)
 		if task.FuncName == funcName {
 			task.Param = params
-			taskList.Set(index, task)
+			if err := taskList.Set(index, task); err != nil {
+				glog.Error(err)
+			}
 			break
 		}
 	}

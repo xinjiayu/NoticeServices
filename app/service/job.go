@@ -4,6 +4,7 @@ import (
 	"NoticeServices/app/dao"
 	"NoticeServices/app/model"
 	"NoticeServices/app/task"
+	"context"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/os/gcron"
 	"github.com/gogf/gf/os/glog"
@@ -18,11 +19,13 @@ func AutoAllTask() {
 		glog.Error(err)
 	}
 	for _, job := range jobs {
-		JobStart(job)
+		if err = JobStart(job); err != nil {
+			//glog.Error(err)
+		}
 	}
 }
 
-//添加操作请求参数
+//JobReqAdd 添加操作请求参数
 type JobReqAdd struct {
 	Name           string `p:"name" v:"required#任务名称不能为空"`
 	Params         string `p:"params"` // 任务参数
@@ -36,13 +39,14 @@ type JobReqAdd struct {
 }
 
 func GetJobs() (jobs []*model.Job, err error) {
-	return dao.Job.FindAll(dao.Job.Columns.Status, "0")
+	err = dao.Job.Ctx(context.TODO()).Where(dao.Job.Columns.Status, "0").Scan(&jobs)
+	return
 }
 
 //添加计划任务
 func JobAdd(jobData *model.Job) (id int64, err error) {
 	glog.Info("======添加任务=======", jobData.Name)
-	res, err := dao.Job.FieldsEx(dao.Job.Columns.Id).Insert(jobData)
+	res, err := dao.Job.Ctx(context.TODO()).FieldsEx(dao.Job.Columns.Id).Insert(jobData)
 	if err != nil {
 		glog.Error(err)
 		err = gerror.New("添加任务失败")
@@ -83,12 +87,14 @@ func JobStart(job *model.Job) error {
 	gcron.Start(job.InvokeTarget)
 	if job.MisfirePolicy == 1 {
 		job.Status = 0
-		dao.Job.Update(job)
+		if _, err := dao.Job.Ctx(context.TODO()).Data(job).Update(); err != nil {
+			//glog.Error(err)
+		}
 	}
 	return nil
 }
 
-//停止任务
+//JobStop 停止任务
 func JobStop(job *model.Job) error {
 	//可以task目录下是否绑定对应的方法
 	f := task.GetByName(job.InvokeTarget)
@@ -100,6 +106,8 @@ func JobStop(job *model.Job) error {
 		gcron.Remove(job.InvokeTarget)
 	}
 	job.Status = 1
-	dao.Job.Update(job)
+	if _, err := dao.Job.Ctx(context.TODO()).Update(job); err != nil {
+		//glog.Error(err)
+	}
 	return nil
 }

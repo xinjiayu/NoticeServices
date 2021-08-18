@@ -2,7 +2,9 @@ package service
 
 import (
 	"NoticeServices/app/dao"
+	"NoticeServices/app/define"
 	"NoticeServices/app/model"
+	"context"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gconv"
@@ -15,14 +17,14 @@ type appService struct {
 var App = new(appService)
 
 func (a *appService) GetAppInfo(appId string) *model.App {
-	app, err := dao.App.FindOne("id", appId)
-	if err != nil {
+	app := new(model.App)
+	if err := dao.App.Ctx(context.TODO()).Where("id", appId).Scan(&app); err != nil {
 		glog.Error(err.Error())
 	}
 	return app
 }
 
-func (a *appService) CreateApp(appData *model.AppData) (*model.App, error) {
+func (a *appService) CreateApp(appData *define.AppData) (*model.App, error) {
 
 	app := new(model.App)
 
@@ -31,7 +33,7 @@ func (a *appService) CreateApp(appData *model.AppData) (*model.App, error) {
 	app.Explain = appData.Explain
 	app.AccessToken = guid.S()
 	app.CreateTime = gconv.Int(gtime.Timestamp())
-	if _, err := dao.App.Insert(app); err != nil {
+	if _, err := dao.App.Ctx(context.TODO()).Insert(app); err != nil {
 		return nil, err
 	}
 

@@ -2,8 +2,10 @@ package notifieer
 
 import (
 	"NoticeServices/app/dao"
+	"NoticeServices/app/define"
 	"NoticeServices/app/model"
 	"NoticeServices/library/tools"
+	"context"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
@@ -18,7 +20,7 @@ type instance struct {
 var Instance = new(instance)
 
 //GateWaySend 通过发送通道进行发送
-func (n *instance) GateWaySend(message *model.InfoData) {
+func (n *instance) GateWaySend(message *define.InfoData) {
 
 	//获取指定通知的配置信息
 	config, _ := n.getInfoConfig(message.ConfigId)
@@ -37,7 +39,8 @@ func (n *instance) GateWaySend(message *model.InfoData) {
 			"config_id":    message.ConfigId,
 			"send_gateway": gatewayName,
 		}
-		template, err := dao.Template.FindOne(where)
+		template := new(model.Template)
+		err := dao.Template.Ctx(context.TODO()).Where(where).Scan(&template)
 		if template != nil {
 			paramDataMap := gconv.Map(message)
 			message.MsgBody = tools.StringLiteralTemplate(template.Content, paramDataMap)
@@ -59,7 +62,7 @@ func (n *instance) GateWaySend(message *model.InfoData) {
 		if err != nil {
 			panic(err)
 		}
-		sendFunc, ok := symbol.(func(map[string]interface{}, *model.InfoData))
+		sendFunc, ok := symbol.(func(map[string]interface{}, *define.InfoData))
 
 		if !ok {
 			glog.Error(gerror.New("Plugin has no Send function"))
@@ -78,16 +81,16 @@ func (n *instance) GateWaySend(message *model.InfoData) {
 }
 
 //getInfoConfig 读取通知信息的配置文件
-func (n *instance) getInfoConfig(configId string) (*model.EntityConfig, error) {
+func (n *instance) getInfoConfig(configId string) (*define.EntityConfig, error) {
 
-	var entityConfig = new(model.EntityConfig)
-	err := dao.Config.Fields("*").Where(dao.Config.Columns.Id, configId).
+	var entityConfig = new(define.EntityConfig)
+	err := dao.Config.Ctx(context.TODO()).Where(dao.Config.Columns.Id, configId).
 		Scan(&entityConfig.Config)
 	if err != nil {
 		return nil, err
 	}
 
-	err = dao.Template.Fields("*").Where(dao.Template.Columns.ConfigId, configId).
+	err = dao.Template.Ctx(context.TODO()).Where(dao.Template.Columns.ConfigId, configId).
 		Scan(&entityConfig.Template)
 	if err != nil {
 		return nil, err

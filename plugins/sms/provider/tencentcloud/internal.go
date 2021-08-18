@@ -1,7 +1,7 @@
 package tencentcloud
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/plugins/sms/provider"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
@@ -25,14 +25,14 @@ func init() {
 type Instance struct {
 }
 
-func (i *Instance) SendSms(ctx *provider.Context, msg *model.InfoData) error {
+func (i *Instance) SendSms(ctx *provider.Context, msg *define.InfoData) error {
 	smsConfig := ctx.SmsConfig
 	logger.Info("sms发送开始")
 	secretKey := gconv.String(smsConfig["secretKey"])
 	secretId := gconv.String(smsConfig["secretId"])
 	signName := gconv.String(smsConfig["sign_name"]) //短信签名
 	tplCode := gconv.String(ctx.SendParam["code"])
-	var sendObjectList []model.SendObject
+	var sendObjectList []define.SendObject
 	err := gjson.DecodeTo(msg.Totag, &sendObjectList)
 	if err != nil {
 		return err

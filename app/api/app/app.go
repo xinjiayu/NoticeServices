@@ -1,7 +1,7 @@
 package app
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
 	"github.com/gogf/gf/net/ghttp"
@@ -10,7 +10,7 @@ import (
 // Create 创建一个通知应用
 func Create(r *ghttp.Request) {
 
-	var appData *model.AppData
+	var appData *define.AppData
 	err := r.Parse(&appData)
 	if err != nil {
 		response.JsonExit(r, 1, "数据有错误", err.Error())

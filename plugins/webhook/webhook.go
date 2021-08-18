@@ -1,7 +1,7 @@
 package main
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
@@ -34,7 +34,8 @@ func init() {
 	})
 }
 
-func Send(sendParam map[string]interface{}, msg *model.InfoData) {
+//goland:noinspection GoUnusedExportedFunction
+func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 	logger.Info("weebhook发送开始")
 	pluginPath := g.Config().GetString("system.PluginPath")
 	cfgFile := pluginPath + "/webhook/config.toml"
@@ -52,7 +53,9 @@ func Send(sendParam map[string]interface{}, msg *model.InfoData) {
 	op.Body = bodyJson
 
 	for _, opData := range weConfigs {
-		gconv.Struct(opData, op)
+		if err := gconv.Struct(opData, op); err != nil {
+			glog.Error(err)
+		}
 		go PostData(op)
 	}
 
@@ -82,7 +85,9 @@ func main() {
 	weConfigs := cfg.GetArray("webhook")
 	for _, op := range weConfigs {
 		o := new(Options)
-		gconv.Struct(op, o)
+		if err := gconv.Struct(op, o); err != nil {
+			glog.Error(err)
+		}
 		glog.Info(o.PayloadURL)
 	}
 

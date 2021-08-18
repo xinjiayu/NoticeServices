@@ -2,7 +2,9 @@ package service
 
 import (
 	"NoticeServices/app/dao"
+	"NoticeServices/app/define"
 	"NoticeServices/app/model"
+	"context"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gconv"
@@ -13,7 +15,7 @@ type configService struct{}
 
 var Config = new(configService)
 
-func (c *configService) CreateConfig(data *model.ConfigData) (*model.Config, error) {
+func (c *configService) CreateConfig(data *define.ConfigData) (*model.Config, error) {
 	var cfg *model.Config
 	if err := gconv.Struct(data, &cfg); err != nil {
 		glog.Error(err)
@@ -22,16 +24,16 @@ func (c *configService) CreateConfig(data *model.ConfigData) (*model.Config, err
 
 	cfg.Id = guid.S()
 	cfg.CreateTime = gconv.Int(gtime.Timestamp())
-	if _, err := dao.Config.Insert(cfg); err != nil {
+	if _, err := dao.Config.Ctx(context.TODO()).Insert(cfg); err != nil {
 		return nil, err
 	}
 
 	return cfg, nil
 }
 
-//SaveConfig 修改
-func (c *configService) UpdateConfig(data *model.ConfigUpData) error {
-	_, err := dao.Config.Data(data).
+//UpdateConfig 修改
+func (c *configService) UpdateConfig(data *define.ConfigUpData) error {
+	_, err := dao.Config.Ctx(context.TODO()).Data(data).
 		FieldsEx(dao.Config.Columns.Id).
 		Where(dao.Config.Columns.Id, data.Id).
 		Update()
@@ -40,18 +42,19 @@ func (c *configService) UpdateConfig(data *model.ConfigUpData) error {
 
 //Delete 删除
 func (c *configService) DeleteConfig(id string) error {
-	_, err := dao.Config.Where(dao.Config.Columns.Id, id).Delete()
+	_, err := dao.Config.Ctx(context.TODO()).Where(dao.Config.Columns.Id, id).Delete()
 	return err
 }
 
 //GetOneConfig 获取一条配置记录
-func (c *configService) GetOneConfig(id string) (*model.Config, error) {
-	return dao.Config.Where(dao.Config.Columns.Id, id).One()
+func (c *configService) GetOneConfig(id string) (data *model.Config, err error) {
+	err = dao.Config.Ctx(context.TODO()).Where(dao.Config.Columns.Id, id).Scan(&data)
+	return
 }
 
 //GetConfigList 获取多条配置记录
-func (c *configService) GetConfigList(r *model.ConfigServiceGetListReq) (*model.ConfigServiceGetListRes, error) {
-	m := dao.Config.Fields("*")
+func (c *configService) GetConfigList(r *define.ConfigServiceGetListReq) (*define.ConfigServiceGetListRes, error) {
+	m := dao.Config.Ctx(context.TODO()).Fields("*")
 
 	if r.Type != "" {
 		m = m.Where(dao.Config.Columns.Type, r.Type)
@@ -63,7 +66,7 @@ func (c *configService) GetConfigList(r *model.ConfigServiceGetListReq) (*model.
 
 	listModel := m.Page(r.Page, r.Size)
 
-	configEntities, err := listModel.M.All()
+	configEntities, err := listModel.All()
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +78,7 @@ func (c *configService) GetConfigList(r *model.ConfigServiceGetListReq) (*model.
 	if err != nil {
 		return nil, err
 	}
-	getListRes := &model.ConfigServiceGetListRes{
+	getListRes := &define.ConfigServiceGetListRes{
 		Page:  r.Page,
 		Size:  r.Size,
 		Total: total,

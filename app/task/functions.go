@@ -2,8 +2,10 @@ package task
 
 import (
 	"NoticeServices/app/dao"
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/app/notifieer"
+	"context"
+	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/util/gconv"
 )
 
@@ -24,9 +26,11 @@ func JobSendMessage() {
 		return
 	}
 	for _, v := range task.Param {
-		info, _ := dao.Info.Where("id", v).One()
-		infoData := new(model.InfoData)
-		gconv.Struct(info, infoData)
+		info, _ := dao.Info.Ctx(context.TODO()).Where("id", v).One()
+		infoData := new(define.InfoData)
+		if err := gconv.Struct(info, infoData); err != nil {
+			glog.Error(err)
+		}
 		notifieer.Instance.GateWaySend(infoData)
 	}
 

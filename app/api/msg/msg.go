@@ -1,14 +1,14 @@
 package msg
 
 import (
-	"NoticeServices/app/model"
+	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
 	"github.com/gogf/gf/net/ghttp"
 )
 
 func Send(r *ghttp.Request) {
-	var msgData *model.InfoData
+	var msgData *define.InfoData
 	err := r.Parse(&msgData)
 	if err != nil {
 		response.JsonExit(r, 1, "数据有错误", err.Error())

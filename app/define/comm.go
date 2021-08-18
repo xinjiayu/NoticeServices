@@ -1,4 +1,4 @@
-package model
+package define
 
 type SendObject struct {
 	Name  string `json:"name"`
