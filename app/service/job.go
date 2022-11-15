@@ -5,22 +5,22 @@ import (
 	"NoticeServices/app/model"
 	"NoticeServices/app/task"
 	"context"
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/os/gcron"
-	"github.com/gogf/gf/os/glog"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcron"
 	"strings"
 )
 
 func AutoAllTask() {
 	//自动执行已开启的任务
-	glog.Info("===========自动执行已开启的任务===========")
+	g.Log().Debug(context.TODO(), "===========自动执行已开启的任务===========")
 	jobs, err := GetJobs()
 	if err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 	}
 	for _, job := range jobs {
 		if err = JobStart(job); err != nil {
-			//glog.Error(err)
+			//g.Log().Error(context.TODO(),err)
 		}
 	}
 }
@@ -45,15 +45,15 @@ func GetJobs() (jobs []*model.Job, err error) {
 
 //添加计划任务
 func JobAdd(jobData *model.Job) (id int64, err error) {
-	glog.Info("======添加任务=======", jobData.Name)
+	g.Log().Debug(context.TODO(), "======添加任务=======", jobData.Name)
 	res, err := dao.Job.Ctx(context.TODO()).FieldsEx(dao.Job.Columns.Id).Insert(jobData)
 	if err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 		err = gerror.New("添加任务失败")
 	}
 	id, err = res.LastInsertId()
 	if err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 		err = gerror.New("添加任务失败")
 	}
 	return
@@ -62,7 +62,7 @@ func JobAdd(jobData *model.Job) (id int64, err error) {
 //启动任务
 func JobStart(job *model.Job) error {
 	//可以task目录下是否绑定对应的方法
-	glog.Info("======启动任务======", job.InvokeTarget)
+	g.Log().Debug(context.TODO(), "======启动任务======", job.InvokeTarget)
 	f := task.GetByName(job.InvokeTarget)
 	if f == nil {
 		return gerror.New("当前task目录下没有绑定这个方法")
@@ -73,12 +73,12 @@ func JobStart(job *model.Job) error {
 	rs := gcron.Search(job.InvokeTarget)
 	if rs == nil {
 		if job.MisfirePolicy == 1 {
-			taskJob, err := gcron.AddSingleton(job.CronExpression, f.Run, job.InvokeTarget)
+			taskJob, err := gcron.AddSingleton(context.TODO(), job.CronExpression, f.Run, job.InvokeTarget)
 			if err != nil || taskJob == nil {
 				return err
 			}
 		} else {
-			taskJob, err := gcron.AddOnce(job.CronExpression, f.Run, job.InvokeTarget)
+			taskJob, err := gcron.AddOnce(context.TODO(), job.CronExpression, f.Run, job.InvokeTarget)
 			if err != nil || taskJob == nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func JobStart(job *model.Job) error {
 	if job.MisfirePolicy == 1 {
 		job.Status = 0
 		if _, err := dao.Job.Ctx(context.TODO()).Data(job).Update(); err != nil {
-			//glog.Error(err)
+			//g.Log().Error(context.TODO(),err)
 		}
 	}
 	return nil
@@ -107,7 +107,7 @@ func JobStop(job *model.Job) error {
 	}
 	job.Status = 1
 	if _, err := dao.Job.Ctx(context.TODO()).Update(job); err != nil {
-		//glog.Error(err)
+		//g.Log().Error(context.TODO(),err)
 	}
 	return nil
 }

@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"github.com/fastwego/wxwork/corporation"
 	"github.com/fastwego/wxwork/corporation/apis/message"
-	"github.com/gogf/gf/encoding/gparser"
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/os/glog"
+	"github.com/gogf/gf/v2/encoding/gparser"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type Alarm struct {
@@ -28,7 +27,7 @@ func GetInstance(corpid, agentID, secret, token, encodingAESKey string) *Alarm {
 	appConfigInfo := g.Cfg().Get("wework.alarm", corporation.AppConfig{})
 	p := gparser.New(appConfigInfo)
 	if err := p.Struct(&instance.AppConfig); err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 	}
 
 	instance.AppConfig.Token = token
@@ -66,7 +65,7 @@ func (e *Alarm) SendMessage(toUser, content string) (interface{}, error) {
 func ToJson(data interface{}) []byte {
 	jsonByte, err := json.Marshal(data)
 	if err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 	}
 	return jsonByte
 }

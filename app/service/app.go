@@ -5,10 +5,10 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/model"
 	"context"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/os/gtime"
-	"github.com/gogf/gf/util/gconv"
-	"github.com/gogf/gf/util/guid"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/guid"
 )
 
 type appService struct {
@@ -19,7 +19,7 @@ var App = new(appService)
 func (a *appService) GetAppInfo(appId string) *model.App {
 	app := new(model.App)
 	if err := dao.App.Ctx(context.TODO()).Where("id", appId).Scan(&app); err != nil {
-		glog.Error(err.Error())
+		g.Log().Error(context.TODO(), err.Error())
 	}
 	return app
 }

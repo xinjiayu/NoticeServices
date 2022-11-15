@@ -4,7 +4,7 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
-	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 func Send(r *ghttp.Request) {
@@ -22,8 +22,8 @@ func Send(r *ghttp.Request) {
 }
 
 func GetMsg(r *ghttp.Request) {
-	appId := r.GetString("app_id")
-	userId := r.GetString("user_id")
+	appId := r.Get("app_id").String()
+	userId := r.Get("user_id").String()
 
 	resData, err := service.Msg.GetInfoByUserID(appId, userId)
 	if err != nil {
@@ -34,7 +34,7 @@ func GetMsg(r *ghttp.Request) {
 }
 
 func MarkRead(r *ghttp.Request) {
-	id := r.GetString("id")
+	id := r.Get("id").String()
 	err := service.Msg.MarkRead(id)
 	if err != nil {
 		response.JsonExit(r, 1, "标记通知信息为已读状态失败", err.Error())

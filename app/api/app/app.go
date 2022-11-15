@@ -4,7 +4,7 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
-	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 // Create 创建一个通知应用
@@ -29,7 +29,7 @@ func Create(r *ghttp.Request) {
 
 func Get(r *ghttp.Request) {
 
-	appId := r.GetString("app_id")
+	appId := r.Get("app_id").String()
 	data := service.App.GetAppInfo(appId)
 
 	response.JsonExit(r, 0, "数据源返回数据值", data)

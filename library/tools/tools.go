@@ -2,7 +2,8 @@ package tools
 
 import (
 	"bytes"
-	"github.com/gogf/gf/os/glog"
+	"context"
+	"github.com/gogf/gf/v2/frame/g"
 	"reflect"
 	"text/template"
 )
@@ -28,12 +29,12 @@ func IsContains(val interface{}, array interface{}) bool {
 func StringLiteralTemplate(str string, param interface{}) string {
 	t, err := template.New("test").Parse(str)
 	if err != nil {
-		glog.Fatal("Parse string literal template error:", err)
+		g.Log().Fatal(context.TODO(), "Parse string literal template error:", err)
 	}
 	buf := new(bytes.Buffer) //读写方法的可变大小的字节缓冲
 	err = t.Execute(buf, param)
 	if err != nil {
-		glog.Fatal("Execute string literal template error:", err)
+		g.Log().Fatal(context.TODO(), "Execute string literal template error:", err)
 		return ""
 	}
 	return buf.String()

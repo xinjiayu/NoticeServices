@@ -2,12 +2,12 @@ package main
 
 import (
 	"NoticeServices/app/define"
-	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/gcfg"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/util/gconv"
+	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gcfg"
+	"github.com/gogf/gf/v2/os/glog"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Options struct {
@@ -54,7 +54,7 @@ func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 
 	for _, opData := range weConfigs {
 		if err := gconv.Struct(opData, op); err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
 		go PostData(op)
 	}
@@ -86,9 +86,9 @@ func main() {
 	for _, op := range weConfigs {
 		o := new(Options)
 		if err := gconv.Struct(op, o); err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
-		glog.Info(o.PayloadURL)
+		g.Log().Debug(context.TODO(), o.PayloadURL)
 	}
 
 }

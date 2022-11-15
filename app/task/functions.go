@@ -5,8 +5,8 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/notifieer"
 	"context"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/util/gconv"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 }
 
 //JobSendMessage 通知发送任务
-func JobSendMessage() {
+func JobSendMessage(ctx context.Context) {
 
 	task := GetByName("JobSendMessage")
 	if task == nil {
@@ -29,7 +29,7 @@ func JobSendMessage() {
 		info, _ := dao.Info.Ctx(context.TODO()).Where("id", v).One()
 		infoData := new(define.InfoData)
 		if err := gconv.Struct(info, infoData); err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
 		notifieer.Instance.GateWaySend(infoData)
 	}

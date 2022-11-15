@@ -4,7 +4,7 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
-	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 type NoticeTemplate struct {
@@ -13,7 +13,7 @@ type NoticeTemplate struct {
 func (n *NoticeTemplate) Get(r *ghttp.Request) {
 
 	//获取单条记录
-	id := r.GetString("id")
+	id := r.Get("id").String()
 	if id != "" {
 		data, err := service.Template.GetOneTemplate(id)
 		if err != nil {
@@ -23,7 +23,7 @@ func (n *NoticeTemplate) Get(r *ghttp.Request) {
 	}
 
 	//获取多条记录
-	configId := r.GetString("config_id")
+	configId := r.Get("config_id").String()
 	if configId != "" {
 		data, err := service.Template.GetTemplateList(configId)
 		if err != nil {
@@ -67,7 +67,7 @@ func (n *NoticeTemplate) Put(r *ghttp.Request) {
 	response.JsonExit(r, 0, "修改成功")
 }
 func (n *NoticeTemplate) Delete(r *ghttp.Request) {
-	id := r.GetString("id")
+	id := r.Get("id").String()
 	err := service.Template.DeleteTemplate(id)
 	if err != nil {
 		response.JsonExit(r, 1, "删除失败", err.Error())

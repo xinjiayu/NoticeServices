@@ -1,20 +1,20 @@
 package middleware
 
 import (
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/glog"
+	"context"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"net/http"
 )
 
 func Auth(r *ghttp.Request) {
 
-	secretKey := g.Config().GetString("system.SecretKey")
+	secretKey := g.Cfg().MustGet(context.TODO(), "system.SecretKey").String()
 	if secretKey != "" {
 		if secretKey == r.Header.Get("secret-key") {
 			r.Middleware.Next()
 		} else {
-			glog.Info("SecretKey 不一致")
+			g.Log().Debug(context.TODO(), "SecretKey 不一致")
 			r.Response.WriteStatus(http.StatusForbidden)
 		}
 	} else {

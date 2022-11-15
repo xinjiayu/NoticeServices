@@ -7,12 +7,11 @@ import (
 	"NoticeServices/app/notifieer"
 	"NoticeServices/boot"
 	"context"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/os/gtime"
-	"github.com/gogf/gf/text/gstr"
-	"github.com/gogf/gf/util/gconv"
-	"github.com/gogf/gf/util/gutil"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gutil"
 )
 
 type msgService struct{}
@@ -45,27 +44,27 @@ func (m *msgService) Send(message *define.InfoData) error {
 		notifieer.Instance.GateWaySend(message)
 
 	case boot.Appointment:
-		glog.Info("预约发送处理==========")
+		g.Log().Debug(context.TODO(), "预约发送处理==========")
 		jd.MisfirePolicy = 2 // 计划执行策略（执行一次）
 		jobId, err := JobAdd(jd)
 		if err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
 		jd.Id = gconv.Int(jobId)
 		if err = JobStart(jd); err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
 
 	case boot.Regular:
-		glog.Info("定期发送处理==========")
+		g.Log().Debug(context.TODO(), "定期发送处理==========")
 		jd.MisfirePolicy = 1 // 计划执行策略（多次执行）
 		jobId, err := JobAdd(jd)
 		if err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
 		jd.Id = gconv.Int(jobId)
 		if err = JobStart(jd); err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 		}
 
 	default:
@@ -118,7 +117,7 @@ func (m *msgService) GetInfoByUserID(appId, userId string) ([]*define.EntityInfo
 func (m *msgService) save(message *define.InfoData) (int, error) {
 	var info *model.Info
 	if err := gconv.Struct(message, &info); err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 		return 0, err
 	}
 
@@ -126,12 +125,12 @@ func (m *msgService) save(message *define.InfoData) (int, error) {
 	info.CreateTime = gconv.Int(gtime.Timestamp())
 	resData, err := dao.Info.Ctx(context.TODO()).FieldsEx(dao.Info.Columns.Id).Data(info).Insert()
 	if err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 		return 0, err
 	}
 	infoId, err2 := resData.LastInsertId()
 	if err2 != nil {
-		glog.Error(err2)
+		g.Log().Error(context.TODO(), err2)
 		return 0, err
 	}
 
@@ -151,7 +150,7 @@ func (m *msgService) save(message *define.InfoData) (int, error) {
 		for _, u := range userList {
 			userInfo.UserId = u
 			if _, err := dao.UserInfo.Ctx(context.TODO()).FieldsEx(dao.UserInfo.Columns.Id).Insert(userInfo); err != nil {
-				glog.Error(err)
+				g.Log().Error(context.TODO(), err)
 				return 0, err
 			}
 		}

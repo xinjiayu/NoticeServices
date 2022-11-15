@@ -5,10 +5,10 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/model"
 	"context"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/os/gtime"
-	"github.com/gogf/gf/util/gconv"
-	"github.com/gogf/gf/util/guid"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/guid"
 )
 
 type templateService struct {
@@ -20,7 +20,7 @@ var Template = new(templateService)
 func (c *templateService) CreateTemplate(data *define.TemplateData) (*model.Template, error) {
 	var tpl *model.Template
 	if err := gconv.Struct(data, &tpl); err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 		return nil, err
 	}
 	tpl.Id = guid.S()

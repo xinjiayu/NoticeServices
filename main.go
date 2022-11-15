@@ -5,9 +5,8 @@ import (
 	_ "NoticeServices/boot"
 	"NoticeServices/library/version"
 	_ "NoticeServices/router"
-	_ "github.com/mattn/go-sqlite3"
-
-	"github.com/gogf/gf/frame/g"
+	_ "github.com/gogf/gf/contrib/drivers/sqlite/v2"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 var (

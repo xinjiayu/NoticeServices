@@ -5,10 +5,10 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/model"
 	"context"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/os/gtime"
-	"github.com/gogf/gf/util/gconv"
-	"github.com/gogf/gf/util/guid"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/guid"
 )
 
 type configService struct{}
@@ -18,7 +18,7 @@ var Config = new(configService)
 func (c *configService) CreateConfig(data *define.ConfigData) (*model.Config, error) {
 	var cfg *model.Config
 	if err := gconv.Struct(data, &cfg); err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (c *configService) GetConfigList(r *define.ConfigServiceGetListReq) (*defin
 	}
 	if r.Key != "" {
 		likePattern := `%` + r.Key + `%`
-		m = m.Where(dao.Config.Columns.Name+" LIKE ?", likePattern).Or(dao.Config.Columns.SendGateway+" LIKE ?", likePattern)
+		m = m.Where(dao.Config.Columns.Name+" LIKE ?", likePattern).WhereOr(dao.Config.Columns.SendGateway+" LIKE ?", likePattern)
 	}
 
 	listModel := m.Page(r.Page, r.Size)

@@ -6,7 +6,7 @@ package define
 
 import (
 	"NoticeServices/app/model"
-	"github.com/gogf/gf/database/gdb"
+	"github.com/gogf/gf/v2/database/gdb"
 )
 
 type ConfigData struct {

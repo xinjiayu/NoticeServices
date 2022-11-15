@@ -1,17 +1,18 @@
 package task
 
 import (
-	"github.com/gogf/gf/container/garray"
-	"github.com/gogf/gf/os/glog"
+	"context"
+	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type Entity struct {
 	FuncName string
 	Param    []string
-	Run      func()
+	Run      func(ctx context.Context)
 }
 
-var taskList = garray.New()
+var taskList = garray.NewArray()
 
 //增加Task方法
 func Add(task Entity) {
@@ -44,7 +45,7 @@ func EditParams(funcName string, params []string) {
 		if task.FuncName == funcName {
 			task.Param = params
 			if err := taskList.Set(index, task); err != nil {
-				glog.Error(err)
+				g.Log().Error(context.TODO(), err)
 			}
 			break
 		}

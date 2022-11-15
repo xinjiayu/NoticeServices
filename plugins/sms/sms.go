@@ -5,10 +5,9 @@ import (
 	"NoticeServices/plugins/sms/provider"
 	"NoticeServices/plugins/sms/provider/alisms"
 	"NoticeServices/plugins/sms/provider/tencentcloud"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/os/gcfg"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/util/gconv"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcfg"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Options struct {
@@ -32,7 +31,7 @@ func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 	cfg := gcfg.New(cfgFile)
 	defaultSms := cfg.GetString("DefaultSend")
 	if defaultSms == "" {
-		glog.Error("获取默认短信服务供应商配置出错")
+		g.Log().Error(context.TODO(), "获取默认短信服务供应商配置出错")
 		return
 	}
 	smsConfig := cfg.GetMap(defaultSms)
@@ -58,14 +57,14 @@ func SmsData(ctx *provider.Context, msg *define.InfoData) {
 
 	default:
 
-		glog.Info("未选择短信发送供应商")
+		g.Log().Debug(context.TODO(), "未选择短信发送供应商")
 
 	}
 
-	glog.Info("发达短信供应商：", ctx.ProviderTitle)
+	g.Log().Debug(context.TODO(), "发达短信供应商：", ctx.ProviderTitle)
 	err := instance.SendSms(ctx, msg)
 	if err != nil {
-		glog.Error(err)
+		g.Log().Error(context.TODO(), err)
 	}
 
 }

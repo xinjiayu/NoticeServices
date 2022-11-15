@@ -4,7 +4,7 @@ import (
 	"NoticeServices/app/define"
 	"NoticeServices/app/service"
 	"NoticeServices/library/response"
-	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 type NoticeConfig struct{}
@@ -12,7 +12,7 @@ type NoticeConfig struct{}
 func (nc *NoticeConfig) Get(r *ghttp.Request) {
 
 	//获取单条记录
-	id := r.GetString("id")
+	id := r.Get("id").String()
 	if id != "" {
 		data, err := service.Config.GetOneConfig(id)
 		if err != nil {
@@ -69,7 +69,7 @@ func (nc *NoticeConfig) Put(r *ghttp.Request) {
 }
 
 func (nc *NoticeConfig) Delete(r *ghttp.Request) {
-	id := r.GetString("id")
+	id := r.Get("id").String()
 	err := service.Config.DeleteConfig(id)
 	if err != nil {
 		response.JsonExit(r, 1, "删除失败", err.Error())

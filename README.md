@@ -28,7 +28,7 @@
 
 基础框架：[GoFrame](https://github.com/gogf/gf) 【 [中文文档](https://goframe.org/index) 】
 
-数据库：SQLite   【 [中文文档](https://doc.yonyoucloud.com/doc/wiki/project/sqlite/sqlite-intro.html) 】      *GO驱动使用  github.com/mattn/go-sqlite3* 【 [接口文档](https://godoc.org/github.com/mattn/go-sqlite3) 】
+数据库：SQLite   【 [中文文档](https://doc.yonyoucloud.com/doc/wiki/project/sqlite/sqlite-intro.html) 】  
 
 目录结构说明：
 
@@ -92,6 +92,15 @@ fatal: No names found, cannot describe anything.
 git tag v0.0.1
 
 git push origin v0.0.1
+```
+
+## dao及model文件生成
+
+采用gf框架的代码生成工具
+
+```
+gf gen dao  -path ./app/ -t app,config,info,job,template,userInfo
+
 ```
 
 

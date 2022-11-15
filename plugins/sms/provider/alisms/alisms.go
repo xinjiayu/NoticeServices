@@ -3,8 +3,7 @@ package alisms
 import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/util/gconv"
+	"github.com/gogf/gf/v2/util/gconv"
 	"strings"
 )
 
@@ -41,7 +40,7 @@ func (sd *Sender) Request(TemplateCode, TemplateParam string, phoneNumbers []str
 	request.TemplateCode = TemplateCode
 	request.TemplateParam = TemplateParam
 
-	glog.Info(request)
+	g.Log().Debug(context.TODO(), request)
 	response, err := sd.Client.SendSms(request)
 	if err != nil {
 		return "", err

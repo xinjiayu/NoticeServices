@@ -6,11 +6,10 @@ import (
 	"NoticeServices/app/model"
 	"NoticeServices/library/tools"
 	"context"
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/text/gstr"
-	"github.com/gogf/gf/util/gconv"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 	"plugin"
 )
 
@@ -24,7 +23,7 @@ func (n *instance) GateWaySend(message *define.InfoData) {
 
 	//获取指定通知的配置信息
 	config, _ := n.getInfoConfig(message.ConfigId)
-	glog.Info("信息配置：", config)
+	g.Log().Debug(context.TODO(), "信息配置：", config)
 	sendGatewayList := gstr.Explode("|", config.Config.SendGateway)
 	if sendGatewayList == nil {
 		return
@@ -47,13 +46,13 @@ func (n *instance) GateWaySend(message *define.InfoData) {
 
 		}
 
-		glog.Info("=== 加载发送通道：", gatewayName)
+		g.Log().Debug(context.TODO(), "=== 加载发送通道：", gatewayName)
 		// 加载插件
-		pluginPath := g.Config().GetString("system.PluginPath")
+		pluginPath := g.Cfg().MustGet(context.TODO(), "system.PluginPath").String()
 		filename := pluginPath + "/" + gatewayName + "/" + gatewayName + ".so"
 		p, err := plugin.Open(filename)
 		if err != nil {
-			glog.Error(err)
+			g.Log().Error(context.TODO(), err)
 			return
 		}
 
@@ -65,7 +64,7 @@ func (n *instance) GateWaySend(message *define.InfoData) {
 		sendFunc, ok := symbol.(func(map[string]interface{}, *define.InfoData))
 
 		if !ok {
-			glog.Error(gerror.New("Plugin has no Send function"))
+			g.Log().Error(context.TODO(), gerror.New("Plugin has no Send function"))
 			return
 		}
 
