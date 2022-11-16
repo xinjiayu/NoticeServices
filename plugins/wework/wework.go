@@ -3,6 +3,7 @@ package main
 import (
 	"NoticeServices/app/define"
 	"NoticeServices/plugins/wework/internal"
+	"context"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcfg"
@@ -22,35 +23,40 @@ func init() {
 }
 
 func Send(sendParam map[string]interface{}, msg *define.InfoData) {
-	logger.Info("wework发送开始")
-	pluginPath := g.Config().GetString("system.PluginPath")
+	g.Log().Debug(context.TODO(), "wework发送开始")
+
+	pluginPath := g.Cfg().MustGet(context.TODO(), "system.PluginPath").String()
+
 	cfgFile := pluginPath + "/wework/config.toml"
+	cfg, err := gcfg.NewAdapterFile(cfgFile)
+	if err != nil {
+		g.Log().Error(context.TODO(), err)
+	}
 
 	//cfgFile := "config.toml" //用于本地main方法直接测试使用，需要将上面的配置注释掉
 
-	cfg := gcfg.New(cfgFile)
 	var sendObjectList []define.SendObject
-	err := gjson.DecodeTo(msg.Totag, &sendObjectList)
+	err = gjson.DecodeTo(msg.Totag, &sendObjectList)
 	if err != nil {
-		logger.Error(err)
+		g.Log().Error(context.TODO(), err)
 		return
 	}
-	corpid := cfg.GetString("weworkAlarm.Corpid")
-	agentID := cfg.GetString("weworkAlarm.AgentID")
-	secret := cfg.GetString("weworkAlarm.Secret")
-	token := cfg.GetString("weworkAlarm.Token")
-	encodingAESKey := cfg.GetString("weworkAlarm.EncodingAESKey")
+	corpid := cfg.MustGet(context.TODO(), "weworkAlarm.Corpid").String()
+	agentID := cfg.MustGet(context.TODO(), "weworkAlarm.AgentID").String()
+	secret := cfg.MustGet(context.TODO(), "weworkAlarm.Secret").String()
+	token := cfg.MustGet(context.TODO(), "weworkAlarm.Token").String()
+	encodingAESKey := cfg.MustGet(context.TODO(), "weworkAlarm.EncodingAESKey").String()
 	alarmService := internal.GetInstance(corpid, agentID, secret, token, encodingAESKey)
 	for _, object := range sendObjectList {
 		if object.Name == "wework" {
 			toUser := object.Value
 			content := msg.MsgBody
-			logger.Info(toUser, content)
+			g.Log().Debug(context.TODO(), toUser, content)
 			data, err := alarmService.SendMessage(toUser, content)
 			if err != nil {
-				logger.Error(err)
+				g.Log().Error(context.TODO(), err)
 			}
-			logger.Info(data)
+			g.Log().Debug(context.TODO(), data)
 		}
 	}
 

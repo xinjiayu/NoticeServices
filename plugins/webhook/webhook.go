@@ -2,9 +2,9 @@ package main
 
 import (
 	"NoticeServices/app/define"
+	"context"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/gogf/gf/v2/os/glog"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -36,19 +36,19 @@ func init() {
 
 //goland:noinspection GoUnusedExportedFunction
 func Send(sendParam map[string]interface{}, msg *define.InfoData) {
-	logger.Info("weebhook发送开始")
-	pluginPath := g.Config().GetString("system.PluginPath")
-	cfgFile := pluginPath + "/webhook/config.toml"
-	cfg := gcfg.New(cfgFile)
+	g.Log().Debug(context.TODO(), "weebhook发送开始")
+	pluginPath := g.Cfg().MustGet(context.TODO(), "system.PluginPath").String()
 
-	weConfigs := cfg.GetArray("webhook")
+	cfgFile := pluginPath + "/webhook/config.toml"
+	cfg, err := gcfg.NewAdapterFile(cfgFile)
+	weConfigs := cfg.MustGet(context.TODO(), "webhook").Array()
 
 	op := new(Options)
 	op.Subject = msg.MsgTitle
 	body := gjson.New(msg)
 	bodyJson, err := body.ToJsonString()
 	if err != nil {
-		logger.Error("webhook转换数据出错！")
+		g.Log().Error(context.TODO(), "webhook转换数据出错！")
 	}
 	op.Body = bodyJson
 
@@ -64,25 +64,30 @@ func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 //PostData 通过API修改数据
 func PostData(o *Options) {
 
-	c := ghttp.NewClient()
+	c := g.Client()
 	c.SetHeader("Secret", o.Secret)
 	c.SetHeader("Accept", "application/json")
 	c.SetHeader("Content-Type", "application/json")
-	if r, e := c.Post(o.PayloadURL, o.Body); e != nil {
-		logger.Error(e)
+	if r, e := c.Post(context.TODO(), o.PayloadURL, o.Body); e != nil {
+		g.Log().Error(context.TODO(), e)
 		return
 
 	} else {
 		defer r.Close()
-		logger.Info(o.PayloadURL, r.StatusCode)
+		g.Log().Debug(context.TODO(), o.PayloadURL, r.StatusCode)
 		body := []byte(r.ReadAllString())
-		logger.Info(body)
+		g.Log().Debug(context.TODO(), body)
 	}
 }
 func main() {
+
 	cfgFile := "config.toml"
-	cfg := gcfg.New(cfgFile)
-	weConfigs := cfg.GetArray("webhook")
+	cfg, err := gcfg.NewAdapterFile(cfgFile)
+	if err != nil {
+		g.Log().Error(context.TODO(), err)
+	}
+	weConfigs := cfg.MustGet(context.TODO(), "webhook").Array()
+
 	for _, op := range weConfigs {
 		o := new(Options)
 		if err := gconv.Struct(op, o); err != nil {

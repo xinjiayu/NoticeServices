@@ -3,6 +3,7 @@ package alisms
 import (
 	"NoticeServices/app/define"
 	"NoticeServices/plugins/sms/provider"
+	"context"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/glog"
@@ -27,7 +28,7 @@ type Instance struct {
 func (i *Instance) SendSms(ctx *provider.Context, msg *define.InfoData) error {
 
 	smsConfig := ctx.SmsConfig
-	logger.Info("sms发送开始")
+	g.Log().Debug(context.TODO(), "sms发送开始")
 	keyId := gconv.String(smsConfig["AccessKeyId"])
 	secret := gconv.String(smsConfig["accessSecret"])
 	regionId := gconv.String(smsConfig["region_id"])
@@ -52,10 +53,10 @@ func (i *Instance) SendSms(ctx *provider.Context, msg *define.InfoData) error {
 		Request(tplCode, msg.MsgBody, phoneNumbers)
 
 	if err != nil {
-		logger.Error(err)
+		g.Log().Error(context.TODO(), err)
 	}
 
-	logger.Info(result)
+	g.Log().Debug(context.TODO(), result)
 
 	return nil
 }

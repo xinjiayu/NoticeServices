@@ -2,10 +2,11 @@ package internal
 
 import (
 	"NoticeServices/plugins/wework/model"
+	"context"
 	"encoding/json"
 	"github.com/fastwego/wxwork/corporation"
 	"github.com/fastwego/wxwork/corporation/apis/message"
-	"github.com/gogf/gf/v2/encoding/gparser"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -24,9 +25,10 @@ var instance *Alarm
 func GetInstance(corpid, agentID, secret, token, encodingAESKey string) *Alarm {
 	instance = new(Alarm)
 	// 加载应用的配置
-	appConfigInfo := g.Cfg().Get("wework.alarm", corporation.AppConfig{})
-	p := gparser.New(appConfigInfo)
-	if err := p.Struct(&instance.AppConfig); err != nil {
+	appConfigInfo, _ := g.Cfg().Get(context.TODO(), "wework.alarm", corporation.AppConfig{})
+	p := gjson.New(appConfigInfo)
+
+	if err := p.Scan(&instance.AppConfig); err != nil {
 		g.Log().Error(context.TODO(), err)
 	}
 

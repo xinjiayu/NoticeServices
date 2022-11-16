@@ -5,6 +5,7 @@ import (
 	"NoticeServices/plugins/sms/provider"
 	"NoticeServices/plugins/sms/provider/alisms"
 	"NoticeServices/plugins/sms/provider/tencentcloud"
+	"context"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -25,16 +26,21 @@ type WebhookConfig struct {
 //goland:noinspection ALL
 func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 
-	pluginPath := g.Config().GetString("system.PluginPath")
-	cfgFile := pluginPath + "/sms/config.toml"
+	pluginPath := g.Cfg().MustGet(context.TODO(), "system.PluginPath").String()
+
+	cfgFile := pluginPath + "/webhook/config.toml"
+	cfg, err := gcfg.NewAdapterFile(cfgFile)
+	if err != nil {
+		g.Log().Error(context.TODO(), err)
+	}
+	defaultSms := cfg.MustGet(context.TODO(), "DefaultSend").String()
 	//cfgFile := "config.toml" //本地程序直接测试的时候，把上面两句注释掉，打开这一句。执行本程序中的main方法。
-	cfg := gcfg.New(cfgFile)
-	defaultSms := cfg.GetString("DefaultSend")
 	if defaultSms == "" {
 		g.Log().Error(context.TODO(), "获取默认短信服务供应商配置出错")
 		return
 	}
-	smsConfig := cfg.GetMap(defaultSms)
+
+	smsConfig := cfg.MustGet(context.TODO(), "defaultSms").Map()
 	title := gconv.String(smsConfig["title"])
 	//初始化上下文
 	ctx := &provider.Context{

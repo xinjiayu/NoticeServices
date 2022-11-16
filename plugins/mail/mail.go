@@ -2,6 +2,7 @@ package main
 
 import (
 	"NoticeServices/app/define"
+	"context"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcfg"
@@ -35,24 +36,26 @@ func init() {
 //Send 发送
 func Send(sendParam map[string]interface{}, msg *define.InfoData) {
 
-	pluginPath := g.Config().GetString("system.PluginPath")
-	cfgFile := pluginPath + "/mail/config.toml"
-	cfg := gcfg.New(cfgFile)
+	pluginPath := g.Cfg().MustGet(context.TODO(), "system.PluginPath").String()
 
-	if cfg.GetString("MailHost") == "" {
-		logger.Error("发送失败：邮件发送配置文件有误")
+	cfgFile := pluginPath + "/webhook/config.toml"
+	cfg, err := gcfg.NewAdapterFile(cfgFile)
+	mailHostCfg := cfg.MustGet(context.TODO(), "MailHost").String()
+
+	if mailHostCfg == "" {
+		g.Log().Error(context.TODO(), "发送失败：邮件发送配置文件有误")
 		return
 	}
 	op := new(Options)
-	op.MailHost = cfg.GetString("MailHost")
-	op.MailPort = cfg.GetInt("MailPort")
-	op.MailUser = cfg.GetString("MailUser")
-	op.MailPass = cfg.GetString("MailPass")
+	op.MailHost = cfg.MustGet(context.TODO(), "MailHost").String()
+	op.MailPort = cfg.MustGet(context.TODO(), "MailPort").Int()
+	op.MailUser = cfg.MustGet(context.TODO(), "MailUser").String()
+	op.MailPass = cfg.MustGet(context.TODO(), "MailPass").String()
 
 	var sendObjectList []define.SendObject
-	err := gjson.DecodeTo(msg.Totag, &sendObjectList)
+	err = gjson.DecodeTo(msg.Totag, &sendObjectList)
 	if err != nil {
-		logger.Error(err)
+		g.Log().Error(context.TODO(), err)
 		return
 	}
 
@@ -85,7 +88,7 @@ func sendMail(o *Options) {
 
 	err := d.DialAndSend(m)
 	if err != nil {
-		logger.Error(err)
+		g.Log().Error(context.TODO(), err)
 	}
-	logger.Info(mailArrTo, "邮件发送完成")
+	g.Log().Debug(context.TODO(), mailArrTo, "邮件发送完成")
 }
